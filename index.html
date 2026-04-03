@@ -288,6 +288,7 @@
         function hideArchive() {
             archive.classList.remove('active');
             overlay.classList.remove('active');
+            bgLayer.style.transform = 'none'; // 배경 transform 초기화
             
             setTimeout(() => {
                 hero.classList.remove('hidden');
@@ -301,6 +302,10 @@
         }
 
         // 배경 GIF 애니메이션만 표시 (마우스 추적 없음)
+        // 페이지 로드 시 배경 transform 초기화
+        window.addEventListener('load', () => {
+            bgLayer.style.transform = 'none';
+        });
     </script>
 </body>
 </html>
