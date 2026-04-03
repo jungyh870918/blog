@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operating Systems From Scratch (1)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --bg: #fdfdfd;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            line-height: 1.7;
+            color: #334155;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .nav-back {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+        }
+        .nav-back a {
+            text-decoration: none;
+            color: var(--accent);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            color: var(--primary);
+        }
+        h3 {
+            color: var(--accent);
+            margin-top: 25px;
+        }
+        .example-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .latency-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .latency-table th, .latency-table td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+        .latency-table th {
+            background-color: var(--code-bg);
+        }
+        .formula {
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-back">
+    <a href="index.html">← 메인 페이지로 돌아가기</a>
+</div>
+
+<div class="wrapper">
+    <h1>Operating Systems From Scratch (1)</h1>
+
+    <p>컴퓨터는 기본적으로 <strong>하드웨어, 소프트웨어, 데이터</strong>를 이용해 인간의 문제를 해결하는 장치입니다. 프로그램은 하드디스크에 존재하다가 램으로 올라오고, CPU가 이를 한 줄씩 읽으며 실행됩니다. 이 단순한 흐름 속에 운영체제의 모든 원리가 숨어 있습니다.</p>
+
+    
+
+    <h2>1. 메모리 계층의 존재 이유: 영구성 vs 속도</h2>
+    <p>왜 메모리는 하나로 통합되지 않고 하드디스크와 램으로 나뉘어 있을까요? 답은 각 장치의 물리적 한계 때문입니다.</p>
+    <ul>
+        <li><strong>하드디스크(HDD/SSD):</strong> 데이터를 영구 보관하지만 속도가 매우 느립니다.</li>
+        <li><strong>램(RAM):</strong> 속도가 백만 배 빠르지만 전원이 꺼지면 데이터가 날아갑니다.</li>
+    </ul>
+    <p>우리는 하드디스크의 <strong>영구성</strong>과 램의 <strong>속도</strong>를 모두 얻기 위해, 프로그램을 실행할 때 하드디스크에서 램으로 데이터를 <strong>복사(Copy)</strong>하여 사용합니다. 원본을 보존하면서도 빠른 실행 속도를 얻기 위한 전략입니다.</p>
+
+    <div class="example-box">
+        <strong>🤖 AI 에이전트 개발자의 시선:</strong> <br>
+        대규모 언어 모델(LLM)을 로컬에서 구동할 때, 수십 GB의 가중치 파일을 HDD에서 RAM(또는 VRAM)으로 올리는 과정이 바로 이 '복사' 과정입니다. RAM 용량이 커질수록 더 많은 프로세스를 동시에 올릴 수 있고, 이는 전체 시스템의 처리 성능(Multiprogramming)과 직결됩니다.
+    </div>
+
+    
+
+    <h2>2. CPU의 한계와 컴파일러</h2>
+    <p>CPU는 오직 0과 1(기계어)만 이해합니다. 우리가 짠 소스코드를 CPU가 읽을 수 있도록 기계어 프로그램(`.exe` 등)으로 번역해 주는 것이 바로 <strong>컴파일러</strong>입니다.</p>
+    <p>중요한 점은 <strong>CPU는 하드디스크에 직접 접근할 권한이 없다</strong>는 것입니다. 하드디스크는 너무 느리고 크기 때문에, CPU가 거기서 특정 프로그램을 직접 찾으려면 모든 공간을 뒤져야 하는 비효율이 발생합니다. 그래서 CPU는 오직 '제한된 크기의 빠른 램'에 올라온 정보만 처리하도록 설계되었습니다.</p>
+
+    <h2>3. 운영체제: 자원 관리자(Resource Manager)</h2>
+    <p>하드디스크에 500개의 프로그램이 있고 램에는 50개만 올라갈 수 있다면, 어떤 50개를 올릴지 결정해야 합니다. 여기서 운영체제가 등장합니다.</p>
+    <ul>
+        <li><strong>Long-term Scheduler (장기 스케줄러):</strong> 어떤 프로그램을 램으로 올릴지(Resource Allocation) 결정합니다.</li>
+        <li><strong>Short-term Scheduler (단기 스케줄러):</strong> 램에 올라온 프로그램 중 어떤 것에 CPU 자원을 줄지 결정합니다.</li>
+    </ul>
+    <p>이처럼 CPU, 램, 하드디스크라는 <strong>리소스</strong>를 어떤 프로세스에게 배분할지 결정하는 알고리즘의 집합이 운영체제의 핵심입니다.</p>
+
+    
+
+    <h2>4. RAM의 공간 분리: OS Space & User Space</h2>
+    <p>컴퓨터를 켜는 순간 운영체제는 램에 상주합니다. 이때 운영체제가 차지하는 공간을 <strong>OS SPACE</strong>, 우리가 사용하는 일반 프로그램(워드, 포토샵 등)이 사용하는 공간을 <strong>USER SPACE</strong>라고 부릅니다.</p>
+
+    
+
+    <h2>5. 프로그램의 실행 상태와 Turn Around Time</h2>
+    <p>모든 프로그램은 실행되는 동안 세 가지 상태를 반복합니다.</p>
+    <ol>
+        <li><strong>Execution (Running):</strong> CPU에 의해 실제로 실행되는 상태.</li>
+        <li><strong>I/O Event:</strong> 키보드 입력이나 파일 저장 등 입출력 장치를 기다리는 상태.</li>
+        <li><strong>Waiting:</strong> 자원을 할당받기 위해 대기하는 상태.</li>
+    </ol>
+
+    <div class="formula">
+        $$Turn\ Around\ Time = Waiting\ Time + Burst\ Time + I/O\ Time$$
+    </div>
+    <p>프로그램이 램에 올라온 순간부터 완전히 제거될 때까지 걸린 총 시간을 <strong>Turn Around Time(TAT)</strong>이라고 하며, 이 시간 동안 위 세 가지 상태가 어떤 순서로 일어날지는 프로그램의 로직과 OS의 스케줄링에 달려 있습니다.</p>
+
+    <div class="example-box">
+        <strong>💡 실무 예시 (워드 프로세서):</strong> <br>
+        워드 프로그램을 실행하면 프로그램 본체와 데이터(문서)가 함께 램으로 올라갑니다. 이후 프로그램은 사용자의 키보드 인풋(I/O Event)을 기다리고, 인풋이 들어오면 CPU가 이를 계산(Execution)하여 데이터를 수정합니다. 이 과정에서 하드디스크는 저장 장치인 동시에 인풋/아웃풋 장치로서 기능하게 됩니다.
+    </div>
+
+    <div class="reference-section">
+        <h2>학습 참고 자료</h2>
+        <ul class="reference-list">
+            <li class="reference-item">
+                <a href="https://en.wikipedia.org/wiki/Memory_hierarchy" target="_blank">📊 Memory Hierarchy (Wikipedia)</a>
+                <span class="reference-desc">메모리 계층 구조와 속도 차이에 대한 상세 도표</span>
+            </li>
+            <li class="reference-item">
+                <a href="https://www.geeksforgeeks.org/introduction-of-operating-system/" target="_blank">💻 OS as a Resource Manager</a>
+                <span class="reference-desc">운영체제의 자원 관리 역할에 대한 기술 문서</span>
+            </li>
+            <li class="reference-item">
+                <a href="https://en.wikipedia.org/wiki/Process_state" target="_blank">🔄 Process State Transition Diagram</a>
+                <span class="reference-desc">프로세스 상태 변화 모델링</span>
+            </li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 50px; text-align: center; border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.8rem; color: #94a3b8;">
+        본 문서는 OS의 기본 원리를 바탕으로 최신 개발 트렌드를 반영하여 재구성되었습니다.
+    </div>
+</div>
+
+</body>
+</html>

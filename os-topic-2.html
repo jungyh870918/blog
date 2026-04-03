@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operating Systems From Scratch (2): Memory Management</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --bg: #fdfdfd;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            line-height: 1.7;
+            color: #334155;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .nav-back {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+        }
+        .nav-back a {
+            text-decoration: none;
+            color: var(--accent);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            color: var(--primary);
+        }
+        h3 {
+            color: var(--accent);
+            margin-top: 25px;
+        }
+        .example-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .latency-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .latency-table th, .latency-table td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+        .latency-table th {
+            background-color: var(--code-bg);
+        }
+        .formula {
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-back">
+    <a href="index.html">← 메인 페이지로 돌아가기</a>
+</div>
+
+<div class="wrapper">
+    <h1>Operating Systems From Scratch (2)</h1>
+
+    <p>프로그램이 램에 올라올 때, OS는 단순히 "빈자리에 넣어"라고 말하지 않습니다. 메모리 관리의 핵심은 <strong>추상화</strong>에 있으며, 그 정점에는 <strong>페이징(Paging)</strong>이 있습니다.</p>
+
+    <h2>1. 주소 바인딩: 논리 주소와 물리 주소</h2>
+    <p>프로그램 내부의 주소(Logical Address)와 실제 램의 주소(Physical Address)는 다릅니다. 컴파일된 코드는 0번지부터 시작한다고 믿지만, 실제로는 램의 5000번지에 있을 수 있습니다. 이 매핑을 관리하는 것이 OS의 첫 번째 임무입니다.</p>
+    
+    
+    <h2>2. 연속 할당의 한계: 단편화(Fragmentation)</h2>
+    <p>메모리를 통째로(Contiguous) 할당하던 시절, 두 가지 골칫거리가 생겼습니다.</p>
+    <ul>
+        <li><strong>고정 파티션:</strong> 방 크기가 정해져 있어 작은 프로그램이 들어가면 남는 공간이 생깁니다. (내부 단편화)</li>
+        <li><strong>가변 파티션:</strong> 딱 맞춰 넣었지만 프로그램이 나갔다 들어왔다 하면서 자잘한 빈 공간들이 생깁니다. (외부 단편화)</li>
+    </ul>
+
+    
+    <div class="example-box">
+        <strong>🤖 AI 에이전트 개발자의 시선:</strong> <br>
+        LLM 인퍼런스 서버를 구축할 때 <strong>KV Cache</strong> 관리는 이 '단편화' 문제와 매우 흡사합니다. 문맥(Context)의 길이가 제각각이기 때문에 메모리를 효율적으로 쓰지 못하면 성능이 급락합니다. 그래서 vLLM 같은 최신 라이브러리는 OS의 페이징 기법을 벤치마킹한 <strong>PagedAttention</strong>을 사용하여 이 문제를 해결합니다.
+    </div>
+
+    <h2>3. 페이징(Paging): 조각내어 정복하라</h2>
+    <p>외부 단편화를 완벽히 해결하는 방법은 프로그램을 일정한 크기의 <strong>페이지(Page)</strong>로 쪼개는 것입니다. 실제 램도 같은 크기의 <strong>프레임(Frame)</strong>으로 나눕니다.</p>
+    <p>이제 프로그램은 램의 연속된 공간이 아닌, 여기저기 흩어진 빈 프레임에 들어가도 됩니다. 사용자 눈에만 하나로 보이면 그만이기 때문입니다.</p>
+
+    
+    <h2>4. 페이지 테이블과 MMU</h2>
+    <p>흩어진 조각들을 찾기 위해 <strong>페이지 테이블(Page Table)</strong>이라는 지도가 필요합니다. CPU가 논리 주소를 던지면, 하드웨어 장치인 <strong>MMU</strong>가 지도를 보고 물리 주소로 빛의 속도로 변환합니다.</p>
+
+    <div class="formula">
+        $$Physical\ Address = (Frame\ Number \times Page\ Size) + Offset$$
+    </div>
+
+    <div class="example-box">
+        <strong>💡 실무적 환기:</strong> <br>
+        우리가 짠 코드에서 `Segmentation Fault`가 발생하는 이유는, 프로세스가 자신에게 할당되지 않은 페이지(주소 공간)를 넘보려 할 때 MMU와 OS가 이를 차단하기 때문입니다. 페이징은 단순한 공간 관리를 넘어 **보호(Protection)**의 기능도 수행합니다.
+    </div>
+
+    <h2>5. 가상 메모리의 기초: Demand Paging</h2>
+    <p>페이징이 가능해지면 굳이 프로그램 전체를 램에 올릴 필요가 없습니다. 당장 쓸 조각만 올리고 나머지는 하드디스크에 두는 <strong>Demand Paging</strong>이 가능해집니다. 이로써 우리는 8GB 램에서도 16GB짜리 대작 게임을 돌릴 수 있게 되었습니다.</p>
+
+    <div class="reference-section">
+        <h2>학습 참고 자료</h2>
+        <ul class="reference-list">
+            <li class="reference-item">
+                <a href="https://en.wikipedia.org/wiki/Paging" target="_blank">📄 Paging Concept (Wikipedia)</a>
+                <span class="reference-desc">페이징의 역사와 페이지 테이블의 하드웨어적 구현</span>
+            </li>
+            <li class="reference-item">
+                <a href="https://upload.wikimedia.org/wikipedia/commons/3/32/Virtual_address_space_and_physical_address_space_relationship.svg" target="_blank">🔄 Logical to Physical Mapping Diagram</a>
+                <span class="reference-desc">주소 변환 과정을 보여주는 시각 자료</span>
+            </li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 50px; text-align: center; border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.8rem; color: #94a3b8;">
+        본 문서는 OS의 기본 원리를 바탕으로 최신 개발 트렌드를 반영하여 재구성되었습니다.
+    </div>
+</div>
+
+</body>
+</html>

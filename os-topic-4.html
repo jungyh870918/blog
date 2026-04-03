@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operating Systems From Scratch (4): Preemptive Scheduling</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --bg: #fdfdfd;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            line-height: 1.7;
+            color: #334155;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .nav-back {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+        }
+        .nav-back a {
+            text-decoration: none;
+            color: var(--accent);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            color: var(--primary);
+        }
+        h3 {
+            color: var(--accent);
+            margin-top: 25px;
+        }
+        .example-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .highlight {
+            color: #ef4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-back">
+    <a href="index.html">← 메인 페이지로 돌아가기</a>
+</div>
+
+<div class="wrapper">
+    <h1>Operating Systems From Scratch (4)</h1>
+
+    <p>비선점형 방식은 한 프로세스가 CPU를 독점할 수 있다는 치명적인 약점이 있었습니다. 현대 운영체제는 이를 해결하기 위해 실행 중인 프로세스를 중단시키고 강제로 CPU를 뺏어오는 <strong>선점(Preemptive)</strong> 개념을 도입했습니다.</p>
+
+    <h2>1. Round Robin (RR): 현대 멀티태스킹의 정석</h2>
+    <p>모든 프로세스에게 동일한 시간인 <strong>Time Quantum(타임 슬라이스)</strong>을 부여하고, 시간이 다 되면 다음 프로세스에게 CPU를 넘겨주는 방식입니다. 현대의 모든 시분할 시스템의 기초가 됩니다.</p>
+
+    
+
+    <ul>
+        <li><strong>Time Quantum의 딜레마:</strong> 
+            <ul>
+                <li>너무 크면? FCFS와 다를 바 없어지며 호위 효과(Convoy Effect)가 발생합니다.</li>
+                <li>너무 작으면? <strong>Context Switching</strong> 오버헤드가 커져서 배보다 배꼽이 더 커집니다.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="example-box">
+        <strong>🤖 에이전틱 개발자의 시선:</strong> <br>
+        우리가 사용하는 Node.js의 Event Loop나 Go의 Goroutine 스케줄러가 수천 개의 동시 요청을 매끄럽게 처리하는 원동력이 바로 이 타임 슬라이싱입니다. 특정 작업이 CPU를 독점하지 못하도록 하여 '전체 시스템의 응답성'을 유지하는 것이 현대 비동기 프로그래밍의 핵심입니다.
+    </div>
+
+    <h2>2. 우선순위 스케줄링과 기아 현상</h2>
+    <p>중요도가 높은 프로세스(예: 시스템 커널 작업)에 높은 우선순위를 주어 먼저 처리하는 방식입니다. 하지만 여기에는 무서운 함정이 있습니다.</p>
+    <ul>
+        <li><strong>Starvation (기아 현상):</strong> 우선순위가 낮은 프로세스가 끊임없이 들어오는 높은 순위 프로세스들에게 밀려 평생 실행되지 못하는 상태입니다.</li>
+        <li><strong>Aging (노화):</strong> 대기 시간이 길어질수록 우선순위를 조금씩 높여주어, 언젠가는 반드시 실행되도록 보장하는 해결책입니다.</li>
+    </ul>
+
+    <h2>3. MLQ vs MLFQ: 계급 사회에서 능력 중심 사회로</h2>
+    <p>프로세스의 성격에 따라 여러 개의 큐를 운영하는 방식입니다.</p>
+    <ul>
+        <li><strong>MLQ (Multi-level Queue):</strong> 큐 사이에 계급이 고정되어 있습니다. 상위 큐가 비어있지 않으면 하위 큐는 영원히 기다려야 합니다.</li>
+        <li><strong>MLFQ (Multi-level Feedback Queue):</strong> 프로세스가 실행 중에 큐 사이를 이동할 수 있습니다. CPU를 너무 많이 쓰는 놈은 하위 큐로 쫓아내고, 응답이 중요한 대화형 작업은 상위 큐로 올립니다.</li>
+    </ul>
+
+    
+
+    <div class="example-box">
+        <strong>💡 실무적 환기:</strong> <br>
+        쿠버네티스(K8s) 환경에서 특정 파드(Pod)가 CPU 리소스를 과하게 점유하면 Throttling이 걸리는 것은 OS의 MLFQ가 CPU 집중형 프로세스를 하위 단계로 밀어내는 논리와 유사합니다. 전체 시스템의 공평성(Fairness)을 유지하기 위한 필연적인 장치입니다.
+    </div>
+
+    <h2>4. 동기화(Synchronization)의 서막: 경쟁 상태</h2>
+    <p>스케줄링에 의해 프로세스들이 쉴 새 없이 교체되다 보니 새로운 문제가 발생합니다. 바로 공유 자원에 동시에 접근할 때 발생하는 <strong>Race Condition(경쟁 상태)</strong>입니다.</p>
+    <ul>
+        <li><strong>상황:</strong> 두 프로세스가 같은 변수 <code>count</code>를 동시에 읽고 수정하려 할 때, 실행 순서에 따라 결과값이 달라지는 현상입니다.</li>
+        <li><strong>임계 구역 (Critical Section):</strong> 공유 자원에 접근하는 코드 영역으로, 반드시 한 번에 하나의 프로세스만 진입해야 합니다.</li>
+    </ul>
+
+    
+
+    <div class="example-box">
+        <strong>⚠️ 주의점:</strong> <br>
+        멀티스레드 코드에서 가끔 데이터가 꼬이는 이유는 논리적 흐름은 맞더라도, 실제 하드웨어 계층에서 일어나는 찰나의 'Context Switch'를 완벽히 통제하지 못하기 때문입니다. 개발자는 반드시 <code>Mutex</code>나 <code>Semaphore</code> 같은 동기화 도구를 통해 이 장벽을 세워야 합니다.
+    </div>
+
+    <div class="reference-section">
+        <h2>학습 참고 자료</h2>
+        <ul class="reference-list">
+            <li class="reference-item">
+                <a href="https://en.wikipedia.org/wiki/Round-robin_scheduling" target="_blank">🔄 Round Robin Scheduling - Wikipedia</a>
+                <span class="reference-desc">타임 퀀텀 설정의 전략과 효율성 분석</span>
+            </li>
+            <li class="reference-item">
+                <a href="https://www.geeksforgeeks.org/multilevel-feedback-queue-scheduling-mlfq/" target="_blank">📉 Multilevel Feedback Queue (MLFQ)</a>
+                <span class="reference-desc">현대 OS가 채택한 동적 우선순위 조절 알고리즘 가이드</span>
+            </li>
+            <li class="reference-item">
+                <a href="https://en.wikipedia.org/wiki/Race_condition" target="_blank">⚡ Race Condition Explained</a>
+                <span class="reference-desc">데이터 정합성을 해치는 경쟁 상태의 시나리오와 해결책</span>
+            </li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 50px; text-align: center; border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.8rem; color: #94a3b8;">
+        본 문서는 OS의 기본 원리를 바탕으로 최신 개발 트렌드를 반영하여 재구성되었습니다.
+    </div>
+</div>
+
+</body>
+</html>
