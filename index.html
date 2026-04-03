@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBOPUNKS | Modern Dev Log</title>
+    <title>ROTOCOL:JUNGYH | Modern Dev Log</title>
     <link rel="icon" href="public/favicon.ico" />
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
     
@@ -38,7 +38,6 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            will-change: transform;
         }
 
         /* 2. 어두운 오버레이: 아카이브 활성화 시 배경을 죽이는 역할 */
@@ -222,7 +221,7 @@
     </nav>
 
     <div class="hero" id="hero-section">
-        <h1>ROBOPUNKS LOG</h1>
+        <h1>PROTOCOL:JUNGYH</h1>
         <p class="description">SYSTEM 2026: DECODING HUMAN KNOWLEDGE...</p>
         <button class="enter-btn" onclick="showArchive()">ENTER ARCHIVE</button>
     </div>
@@ -301,12 +300,7 @@
             }, 800);
         }
 
-        // 마우스 패럴랙스 (GIF 위에 입체감 추가)
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.pageX) / 50;
-            const y = (window.innerHeight / 2 - e.pageY) / 50;
-            bgLayer.style.transform = `translateX(${x}px) translateY(${y}px)`;
-        });
+        // 배경 GIF 애니메이션만 표시 (마우스 추적 없음)
     </script>
 </body>
 </html>
