@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --punk-pink: #d6517d;
+  --punk-neon: #ff3860;
+}
+
+/* Post content styles */
+.post-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 2px solid #3b82f6;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+.post-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.post-content p { margin-bottom: 1rem; line-height: 1.8; color: #334155; }
+.post-content ul, .post-content ol { margin: 1rem 0 1rem 1.5rem; color: #334155; }
+.post-content li { margin-bottom: 0.5rem; line-height: 1.7; }
+.post-content ul { list-style-type: disc; }
+.post-content ol { list-style-type: decimal; }
+.post-content ul ul { list-style-type: circle; margin-top: 0.25rem; }
+.post-content strong { font-weight: 700; }
+.post-content code {
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875em;
+  color: #1e40af;
+}
+.post-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+.post-content pre code { background: transparent; color: #e2e8f0; padding: 0; font-size: 0.875rem; }
+.post-content .example-box {
+  background: #f8fafc;
+  border-left: 4px solid #3b82f6;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+  border-radius: 0 8px 8px 0;
+  line-height: 1.7;
+}
+.post-content .example-box p { margin-bottom: 0.5rem; }
+.post-content .pro-tip {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+  border-radius: 0 8px 8px 0;
+  line-height: 1.7;
+}
+.post-content .formula {
+  text-align: center;
+  background: #0f172a;
+  color: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+.post-content .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; }
+.post-content .data-table th, .post-content .data-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.post-content .data-table th { background: #f1f5f9; font-weight: 600; }
+.post-content .reference-section { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
+.post-content .reference-list { list-style: none; padding: 0; margin: 0; }
+.post-content .reference-list li { margin-bottom: 0.75rem; }
+.post-content .reference-list a { color: #3b82f6; text-decoration: none; font-weight: 500; }
+.post-content .reference-list a:hover { text-decoration: underline; }
+.post-content a { color: #3b82f6; text-decoration: none; }
+.post-content a:hover { text-decoration: underline; }
