@@ -280,7 +280,7 @@ export default function HomePage() {
           color: 'rgba(255,255,255,0.75)',
           padding: '0 20px',
         }}>
-          2026 — 도시의 노을 아래서
+          somewhere between the skyline and the syntax
         </p>
         <button
           onClick={() => setView('hub')}

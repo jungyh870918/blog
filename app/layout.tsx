@@ -4,7 +4,7 @@ import LoadingBar from '@/components/LoadingBar';
 
 export const metadata: Metadata = {
   title: 'PROTOCOL:JUNGYH | Dev Log',
-  description: '2026, 도시의 노을 아래서',
+  description: 'somewhere between the skyline and the syntax',
   icons: { icon: '/favicon.ico' },
 };
 
