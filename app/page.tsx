@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { categories } from '@/lib/posts';
+import ParallaxBg from '@/components/ParallaxBg';
 
 type View = 'hero' | 'hub' | 'blog';
 
@@ -11,6 +12,11 @@ const NAV_LINKS = [
   { label: 'BOOKS', href: 'https://butter-black.vercel.app/' },
   { label: 'STOCKS', href: 'https://stock-nine-blue.vercel.app/' },
 ];
+
+// 폰트
+const F_TITLE = "'Orbitron', sans-serif";
+const F_UI    = "'Rajdhani', sans-serif";
+const F_MONO  = "'VT323', monospace";
 
 const TICKER_ITEMS = [
   'jungyh870918@gmail.com',
@@ -30,7 +36,7 @@ export default function HomePage() {
     <div style={{
       margin: 0, padding: 0, minHeight: '100vh',
       backgroundColor: '#000', color: '#fff',
-      fontFamily: "'VT323', monospace",
+      fontFamily: F_MONO,
       overflow: view === 'blog' ? 'auto' : 'hidden',
     }}>
       <style>{`
@@ -41,6 +47,31 @@ export default function HomePage() {
         @keyframes fadeIn {
           from { opacity: 0; }
           to   { opacity: 1; }
+        }
+        @keyframes cursor-blink {
+          0%, 49%  { opacity: 1; }
+          50%, 100% { opacity: 0; }
+        }
+        /* 타이틀 타이핑 효과 */
+        @keyframes typing {
+          from { width: 0; }
+          to   { width: 100%; }
+        }
+        .title-cursor {
+          display: inline-block;
+          width: clamp(14px, 2vw, 28px);
+          height: 0.9em;
+          background: #ff3860;
+          margin-left: 10px;
+          vertical-align: middle;
+          box-shadow:
+            0 0 8px  #ff3860,
+            0 0 20px #ff3860,
+            0 0 45px rgba(255,56,96,0.9),
+            0 0 80px rgba(255,56,96,0.5);
+          animation: cursor-blink 0.85s step-end infinite;
+          flex-shrink: 0;
+          border-radius: 2px;
         }
         @keyframes ticker {
           0%   { transform: translateX(0); }
@@ -53,10 +84,12 @@ export default function HomePage() {
           border: 3px solid #d6517d;
           box-shadow: 6px 6px 0px #d6517d;
           padding: 22px 32px;
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 700;
+          font-size: clamp(1.1rem, 1.8vw, 1.4rem);
           cursor: pointer;
           text-align: left;
+          letter-spacing: 3px;
           display: flex;
           align-items: center;
           gap: 16px;
@@ -76,8 +109,10 @@ export default function HomePage() {
           border: 3px solid #333;
           box-shadow: none;
           padding: 22px 32px;
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 700;
+          font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+          letter-spacing: 3px;
           display: flex;
           align-items: center;
           gap: 16px;
@@ -98,8 +133,10 @@ export default function HomePage() {
           background: transparent;
           border: 2px solid #d6517d;
           color: #d6517d;
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(0.5rem, 1vw, 0.75rem);
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 700;
+          font-size: clamp(0.8rem, 1.2vw, 1rem);
+          letter-spacing: 2px;
           padding: 8px 16px;
           cursor: pointer;
           transition: background 0.15s, color 0.15s;
@@ -110,10 +147,11 @@ export default function HomePage() {
           background: transparent;
           border: none;
           color: #888;
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(0.5rem, 1vw, 0.7rem);
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 600;
+          font-size: clamp(0.85rem, 1.2vw, 1rem);
           cursor: pointer;
-          letter-spacing: 2px;
+          letter-spacing: 3px;
           transition: color 0.15s;
         }
         .to-main-btn:hover { color: #d6517d; }
@@ -133,11 +171,12 @@ export default function HomePage() {
         }
         .ticker-inner:hover { animation-play-state: paused; }
         .ticker-item {
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+          font-family: 'Rajdhani', sans-serif;
+          font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+          font-weight: 600;
           padding: 0 clamp(14px, 2.5vw, 28px);
           color: #fff;
-          letter-spacing: 1px;
+          letter-spacing: 2px;
         }
         .ticker-item.email {
           color: #d6517d;
@@ -148,15 +187,12 @@ export default function HomePage() {
           opacity: 0.5;
           font-size: clamp(0.45rem, 0.9vw, 0.6rem);
           align-self: center;
+          font-family: 'Rajdhani', sans-serif;
         }
       `}</style>
 
-      {/* 배경 GIF */}
-      <div style={{
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0,
-        backgroundImage: "url('/assets/parallax-bg.gif')",
-        backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat',
-      }} />
+      {/* 패럴랙스 배경 */}
+      <ParallaxBg />
 
       {/* 다크 오버레이 */}
       <div style={{
@@ -181,7 +217,7 @@ export default function HomePage() {
         {/* 전광판 레이블 */}
         <div style={{
           background: '#d6517d',
-          color: '#000', fontFamily: "'Press Start 2P', cursive",
+          color: '#000', fontFamily: F_UI,
           fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)',
           padding: '0 clamp(8px, 1.5vw, 14px)',
           height: '100%', display: 'flex', alignItems: 'center',
@@ -222,32 +258,48 @@ export default function HomePage() {
         pointerEvents: overlayActive ? 'none' : 'auto',
       }}>
         <h1 style={{
-          fontFamily: "'Press Start 2P', cursive",
-          fontSize: 'clamp(1.4rem, 5vw, 4rem)',
-          textShadow: '6px 6px 0px #d6517d', marginBottom: '20px',
-        }}>PROTOCOL:JUNGYH</h1>
-        <p style={{
-          fontSize: 'clamp(1rem, 3vw, 2rem)', maxWidth: '700px', marginBottom: '48px',
-          textShadow: '2px 2px 8px rgba(0,0,0,0.8)', padding: '0 20px',
+          fontFamily: F_TITLE,
+          fontWeight: 900,
+          fontSize: 'clamp(1.8rem, 5.5vw, 4.5rem)',
+          textShadow: '0 0 30px rgba(214,81,125,0.6), 4px 4px 0px rgba(214,81,125,0.4)',
+          letterSpacing: '0.05em',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
-          SYSTEM 2026: DECODING HUMAN KNOWLEDGE...
+          <span>&gt;&nbsp;JUNGYH</span>
+          <span className="title-cursor" />
+        </h1>
+        <p style={{
+          fontFamily: F_UI,
+          fontWeight: 500,
+          fontSize: 'clamp(0.9rem, 2vw, 1.3rem)',
+          maxWidth: '700px', marginBottom: '48px',
+          letterSpacing: '0.25em',
+          color: 'rgba(255,255,255,0.75)',
+          padding: '0 20px',
+        }}>
+          2026 — 도시의 노을 아래서
         </p>
         <button
           onClick={() => setView('hub')}
           style={{
             background: '#d6517d', color: 'white',
             padding: 'clamp(16px, 2.5vw, 25px) clamp(28px, 4vw, 50px)',
-            fontFamily: "'Press Start 2P', cursive",
-            border: 'none', boxShadow: '6px 6px 0px #000',
-            fontSize: 'clamp(0.7rem, 1.5vw, 1.2rem)',
+            fontFamily: F_UI,
+            fontWeight: 700,
+            letterSpacing: '0.2em',
+            border: 'none', boxShadow: '6px 6px 0px rgba(0,0,0,0.6)',
+            fontSize: 'clamp(1rem, 2vw, 1.4rem)',
             cursor: 'pointer', display: 'flex', flexDirection: 'column',
             alignItems: 'center', gap: '8px',
           }}
           onMouseEnter={e => { e.currentTarget.style.background = '#ff3860'; e.currentTarget.style.transform = 'scale(1.05)'; }}
           onMouseLeave={e => { e.currentTarget.style.background = '#d6517d'; e.currentTarget.style.transform = 'scale(1)'; }}
         >
-          <span>JACK IN</span>
-          <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.6rem)', opacity: 0.8 }}>[ SELECT DESTINATION ]</span>
+          <span>READ.ME</span>
+          <span style={{ fontFamily: F_UI, fontWeight: 500, letterSpacing: '0.15em', fontSize: 'clamp(0.7rem, 1vw, 0.85rem)', opacity: 0.75 }}>[ YOU FOUND IT ]</span>
         </button>
       </div>
 
@@ -261,9 +313,10 @@ export default function HomePage() {
           animation: 'fadeIn 0.4s ease forwards',
         }}>
           <p style={{
-            fontFamily: "'Press Start 2P', cursive",
-            fontSize: 'clamp(0.5rem, 1vw, 0.7rem)',
-            color: '#d6517d', letterSpacing: '4px',
+            fontFamily: F_UI,
+            fontWeight: 600,
+            fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+            color: '#d6517d', letterSpacing: '6px',
             marginBottom: 'clamp(24px, 4vh, 48px)', opacity: 0.9,
           }}>// SELECT DESTINATION</p>
 
@@ -319,8 +372,10 @@ export default function HomePage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(20px, 4vh, 40px)' }}>
               <button className="back-btn" onClick={() => setView('hub')}>← BACK</button>
               <span style={{
-                fontFamily: "'Press Start 2P', cursive",
-                fontSize: 'clamp(0.5rem, 1vw, 0.75rem)',
+                fontFamily: F_UI,
+                fontWeight: 600,
+                letterSpacing: '3px',
+                fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
                 color: '#fff', opacity: 0.5,
               }}>BLOG / ARCHIVE</span>
             </div>
@@ -339,10 +394,12 @@ export default function HomePage() {
                   padding: 'clamp(16px, 3vw, 30px)',
                 }}>
                   <span style={{
-                    fontFamily: "'Press Start 2P', cursive",
-                    fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+                    fontFamily: F_TITLE,
+                    fontWeight: 700,
+                    fontSize: 'clamp(1rem, 2vw, 1.4rem)',
                     color: '#d6517d', marginBottom: '16px', display: 'block',
                     borderBottom: '2px solid #fff', paddingBottom: '10px',
+                    letterSpacing: '0.1em',
                   }}>{cat.label}</span>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {cat.comingSoon || cat.posts.length === 0 ? (
