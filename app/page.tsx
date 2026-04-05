@@ -11,6 +11,7 @@ type View = 'hero' | 'hub' | 'blog';
 const NAV_LINKS = [
   { label: 'BOOKS', href: 'https://butter-black.vercel.app/' },
   { label: 'STOCKS', href: 'https://stock-nine-blue.vercel.app/' },
+  { label: 'VOCAB', href: 'https://streaming-production-40fd.up.railway.app/' },
 ];
 
 // 폰트
