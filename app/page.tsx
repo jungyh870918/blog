@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { categories } from '@/lib/posts';
@@ -31,6 +31,46 @@ export default function HomePage() {
   const [view, setView] = useState<View>('hero');
   const overlayActive = view !== 'hero';
 
+  // BGM
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [bgmPlaying, setBgmPlaying] = useState(false);
+  const [bgmVolume, setBgmVolume] = useState(0.35);
+  const [bgmReady, setBgmReady] = useState(false); // 파일 존재 여부
+
+  useEffect(() => {
+    const audio = new Audio('/assets/bgm.wav');
+    audio.loop = true;
+    audio.volume = bgmVolume;
+    // canplaythrough 이벤트로 파일 존재 확인
+    audio.addEventListener('canplaythrough', () => setBgmReady(true), { once: true });
+    audio.addEventListener('error', () => setBgmReady(false), { once: true });
+    audioRef.current = audio;
+    return () => { audio.pause(); audio.src = ''; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const startBgm = () => {
+    if (!audioRef.current || !bgmReady) return;
+    audioRef.current.play().catch(() => {});
+    setBgmPlaying(true);
+  };
+
+  const toggleBgm = () => {
+    if (!audioRef.current) return;
+    if (bgmPlaying) {
+      audioRef.current.pause();
+      setBgmPlaying(false);
+    } else {
+      audioRef.current.play().catch(() => {});
+      setBgmPlaying(true);
+    }
+  };
+
+  const handleVolume = (v: number) => {
+    setBgmVolume(v);
+    if (audioRef.current) audioRef.current.volume = v;
+  };
+
   // 전광판용: 2번 복제해서 끊김 없이 순환
   const tickerContent = [...TICKER_ITEMS, ...TICKER_ITEMS];
 
@@ -54,7 +94,6 @@ export default function HomePage() {
           0%, 49%  { opacity: 1; }
           50%, 100% { opacity: 0; }
         }
-        /* 타이틀 타이핑 효과 */
         @keyframes typing {
           from { width: 0; }
           to   { width: 100%; }
@@ -191,6 +230,47 @@ export default function HomePage() {
           align-self: center;
           font-family: 'Rajdhani', sans-serif;
         }
+
+        /* BGM 컨트롤 */
+        .bgm-bar {
+          position: fixed;
+          bottom: 20px; right: 20px;
+          z-index: 300;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: rgba(0,0,0,0.75);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(214,81,125,0.35);
+          border-radius: 4px;
+          padding: 7px 14px;
+          transition: opacity 0.3s;
+        }
+        .bgm-bar:hover { border-color: #d6517d; }
+        .bgm-toggle {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #d6517d;
+          font-size: 1rem;
+          padding: 0;
+          line-height: 1;
+          transition: color 0.15s, transform 0.15s;
+        }
+        .bgm-toggle:hover { color: #ff3860; transform: scale(1.15); }
+        .bgm-track {
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 600;
+          font-size: 0.7rem;
+          color: rgba(255,255,255,0.45);
+          letter-spacing: 1px;
+          white-space: nowrap;
+        }
+        input[type=range].bgm-slider {
+          width: 68px;
+          accent-color: #d6517d;
+          cursor: pointer;
+        }
       `}</style>
 
       {/* 패럴랙스 배경 */}
@@ -216,7 +296,6 @@ export default function HomePage() {
         gap: '12px',
         paddingRight: 'clamp(10px, 2vw, 20px)',
       }}>
-        {/* 전광판 레이블 */}
         <div style={{
           background: '#d6517d',
           color: '#000', fontFamily: F_UI,
@@ -227,7 +306,6 @@ export default function HomePage() {
           letterSpacing: '1px',
         }}>SIGNAL</div>
 
-        {/* 흐르는 텍스트 */}
         <div className="ticker-wrap">
           <div className="ticker-inner">
             {tickerContent.map((item, i) => (
@@ -241,7 +319,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 소셜 아이콘 */}
         <div style={{ display: 'flex', gap: 'clamp(8px, 1.5vw, 14px)', flexShrink: 0 }}>
           <Image src="/assets/facebook_32x32.png" alt="FB"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 4px #d6517d)', cursor: 'pointer' }} />
           <Image src="/assets/twitter_32x32.png"  alt="TW"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 4px #d6517d)', cursor: 'pointer' }} />
@@ -285,7 +362,7 @@ export default function HomePage() {
           somewhere between the skyline and the syntax
         </p>
         <button
-          onClick={() => setView('hub')}
+          onClick={() => { setView('hub'); startBgm(); }}
           style={{
             background: '#d6517d', color: 'white',
             padding: 'clamp(16px, 2.5vw, 25px) clamp(28px, 4vw, 50px)',
@@ -304,6 +381,22 @@ export default function HomePage() {
           <span style={{ fontFamily: F_UI, fontWeight: 500, letterSpacing: '0.15em', fontSize: 'clamp(0.7rem, 1vw, 0.85rem)', opacity: 0.75 }}>[ YOU FOUND IT ]</span>
         </button>
       </div>
+
+      {/* ── BGM 컨트롤 (파일 로드됐을 때만 표시) ── */}
+      {bgmReady && (
+        <div className="bgm-bar">
+          <button className="bgm-toggle" onClick={toggleBgm} title={bgmPlaying ? '일시정지' : '재생'}>
+            {bgmPlaying ? '⏸' : '▶'}
+          </button>
+          <input
+            type="range" className="bgm-slider"
+            min={0} max={1} step={0.01}
+            value={bgmVolume}
+            onChange={e => handleVolume(Number(e.target.value))}
+          />
+          <span className="bgm-track">TOKYO — HIJAQ</span>
+        </div>
+      )}
 
       {/* ── HUB ── */}
       {view === 'hub' && (
@@ -356,7 +449,6 @@ export default function HomePage() {
       {/* ── BLOG ARCHIVE ── */}
       {view === 'blog' && (
         <div style={{
-          /* fixed → 스크롤 문제 원인. position:absolute + top=nav높이 로 수정 */
           position: 'absolute',
           top: 0, left: 0, right: 0,
           minHeight: '100vh',
@@ -370,7 +462,6 @@ export default function HomePage() {
             margin: '0 auto',
             padding: 'clamp(16px, 3vw, 32px) clamp(16px, 3vw, 32px)',
           }}>
-            {/* 헤더 */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(20px, 4vh, 40px)' }}>
               <button className="back-btn" onClick={() => setView('hub')}>← BACK</button>
               <span style={{
@@ -382,7 +473,6 @@ export default function HomePage() {
               }}>BLOG / ARCHIVE</span>
             </div>
 
-            {/* 카테고리 그리드 */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(220px, 28vw, 280px), 1fr))',
