@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return {};
-  return { title: `${post.title} | PROTOCOL:JUNGYH` };
+  return { title: `${post.title} | DBA, Vibe Coder:JUNGYH` };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {

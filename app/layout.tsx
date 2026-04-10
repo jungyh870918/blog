@@ -3,8 +3,8 @@ import './globals.css';
 import LoadingBar from '@/components/LoadingBar';
 
 export const metadata: Metadata = {
-  title: 'PROTOCOL:JUNGYH | Dev Log',
-  description: 'somewhere between the skyline and the syntax',
+  title: 'DBA, Vibe Coder:JUNGYH',
+  description: 'vibe coder by day, dba by night',
   icons: { icon: '/favicon.ico' },
 };
 

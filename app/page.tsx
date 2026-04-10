@@ -359,7 +359,7 @@ export default function HomePage() {
           color: 'rgba(255,255,255,0.75)',
           padding: '0 20px',
         }}>
-          somewhere between the skyline and the syntax
+          vibe coder by day, dba by night
         </p>
         <button
           onClick={() => { setView('hub'); startBgm(); }}
