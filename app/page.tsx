@@ -9,13 +9,13 @@ import ParallaxBg from '@/components/ParallaxBg';
 type View = 'hero' | 'hub' | 'blog';
 
 const NAV_LINKS = [
-  { label: 'BOOKS', href: 'https://butter-black.vercel.app/' },
-  { label: 'STOCKS', href: 'https://stock-nine-blue.vercel.app/' },
-  { label: 'VOCAB', href: 'https://streaming-production-40fd.up.railway.app/' },
-  { label: 'DBA', href: 'https://jungyh870918.github.io/dba/' },
+  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/' },
+  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/' },
+  { label: 'VOCAB',     href: 'https://streaming-production-40fd.up.railway.app/' },
+  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/' },
+  { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/' },
 ];
 
-// 폰트
 const F_TITLE = "'Orbitron', sans-serif";
 const F_UI    = "'Rajdhani', sans-serif";
 const F_MONO  = "'VT323', monospace";
@@ -35,13 +35,12 @@ export default function HomePage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [bgmPlaying, setBgmPlaying] = useState(false);
   const [bgmVolume, setBgmVolume] = useState(0.35);
-  const [bgmReady, setBgmReady] = useState(false); // 파일 존재 여부
+  const [bgmReady, setBgmReady] = useState(false);
 
   useEffect(() => {
     const audio = new Audio('/assets/bgm.wav');
     audio.loop = true;
     audio.volume = bgmVolume;
-    // canplaythrough 이벤트로 파일 존재 확인
     audio.addEventListener('canplaythrough', () => setBgmReady(true), { once: true });
     audio.addEventListener('error', () => setBgmReady(false), { once: true });
     audioRef.current = audio;
@@ -71,14 +70,19 @@ export default function HomePage() {
     if (audioRef.current) audioRef.current.volume = v;
   };
 
-  // 전광판용: 2번 복제해서 끊김 없이 순환
   const tickerContent = [...TICKER_ITEMS, ...TICKER_ITEMS];
+
+  // 허브 메뉴 바깥 클릭 시 hero로 복귀
+  const handleHubBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) setView('hero');
+  };
 
   return (
     <div style={{
       margin: 0, padding: 0, minHeight: '100vh',
       backgroundColor: '#000', color: '#fff',
       fontFamily: F_MONO,
+      // hub/hero: overflow hidden, blog: scroll
       overflow: view === 'blog' ? 'auto' : 'hidden',
     }}>
       <style>{`
@@ -94,10 +98,11 @@ export default function HomePage() {
           0%, 49%  { opacity: 1; }
           50%, 100% { opacity: 0; }
         }
-        @keyframes typing {
-          from { width: 0; }
-          to   { width: 100%; }
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
+
         .title-cursor {
           display: inline-block;
           width: clamp(14px, 2vw, 28px);
@@ -114,9 +119,19 @@ export default function HomePage() {
           flex-shrink: 0;
           border-radius: 2px;
         }
-        @keyframes ticker {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+
+        /* 허브 스크롤 컨테이너 */
+        .hub-scroll {
+          overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          max-height: 100%;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: clamp(60px, 10vh, 100px) clamp(20px, 5vw, 40px) clamp(50px, 8vh, 80px);
+          box-sizing: border-box;
         }
 
         .hub-btn {
@@ -138,6 +153,7 @@ export default function HomePage() {
           text-decoration: none;
           width: 100%;
           box-sizing: border-box;
+          flex-shrink: 0;
         }
         .hub-btn:hover, .hub-btn:active {
           background: #d6517d;
@@ -159,6 +175,7 @@ export default function HomePage() {
           gap: 16px;
           width: 100%;
           box-sizing: border-box;
+          flex-shrink: 0;
         }
         .post-link {
           text-decoration: none;
@@ -194,6 +211,7 @@ export default function HomePage() {
           cursor: pointer;
           letter-spacing: 3px;
           transition: color 0.15s;
+          flex-shrink: 0;
         }
         .to-main-btn:hover { color: #d6517d; }
 
@@ -276,10 +294,10 @@ export default function HomePage() {
       {/* 패럴랙스 배경 */}
       <ParallaxBg />
 
-      {/* 다크 오버레이 */}
+      {/* 다크 오버레이 — 0.45로 낮춰서 배경 살짝 보이게 */}
       <div style={{
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5,
-        background: 'rgba(0,0,0,0.88)',
+        background: 'rgba(0,0,0,0.45)',
         opacity: overlayActive ? 1 : 0,
         transition: 'opacity 0.8s ease',
         pointerEvents: 'none',
@@ -337,22 +355,17 @@ export default function HomePage() {
         pointerEvents: overlayActive ? 'none' : 'auto',
       }}>
         <h1 style={{
-          fontFamily: F_TITLE,
-          fontWeight: 900,
+          fontFamily: F_TITLE, fontWeight: 900,
           fontSize: 'clamp(1.8rem, 5.5vw, 4.5rem)',
           textShadow: '0 0 30px rgba(214,81,125,0.6), 4px 4px 0px rgba(214,81,125,0.4)',
-          letterSpacing: '0.05em',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          letterSpacing: '0.05em', marginBottom: '20px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <span>&gt;&nbsp;JUNGYH</span>
           <span className="title-cursor" />
         </h1>
         <p style={{
-          fontFamily: F_UI,
-          fontWeight: 500,
+          fontFamily: F_UI, fontWeight: 500,
           fontSize: 'clamp(0.9rem, 2vw, 1.3rem)',
           maxWidth: '700px', marginBottom: '48px',
           letterSpacing: '0.25em',
@@ -366,9 +379,7 @@ export default function HomePage() {
           style={{
             background: '#d6517d', color: 'white',
             padding: 'clamp(16px, 2.5vw, 25px) clamp(28px, 4vw, 50px)',
-            fontFamily: F_UI,
-            fontWeight: 700,
-            letterSpacing: '0.2em',
+            fontFamily: F_UI, fontWeight: 700, letterSpacing: '0.2em',
             border: 'none', boxShadow: '6px 6px 0px rgba(0,0,0,0.6)',
             fontSize: 'clamp(1rem, 2vw, 1.4rem)',
             cursor: 'pointer', display: 'flex', flexDirection: 'column',
@@ -382,7 +393,7 @@ export default function HomePage() {
         </button>
       </div>
 
-      {/* ── BGM 컨트롤 (파일 로드됐을 때만 표시) ── */}
+      {/* ── BGM 컨트롤 ── */}
       {bgmReady && (
         <div className="bgm-bar">
           <button className="bgm-toggle" onClick={toggleBgm} title={bgmPlaying ? '일시정지' : '재생'}>
@@ -398,52 +409,77 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ── HUB ── */}
+      {/* ── HUB ──
+          - position: fixed + inset:0 으로 전체 덮기
+          - 바깥 클릭(backdrop) → hero 복귀
+          - 내부는 .hub-scroll 로 스크롤 처리
+      */}
       {view === 'hub' && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 200,
-          display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', alignItems: 'center',
-          padding: 'clamp(60px, 10vh, 100px) clamp(20px, 5vw, 40px) clamp(30px, 5vh, 60px)',
-          animation: 'fadeIn 0.4s ease forwards',
-        }}>
-          <p style={{
-            fontFamily: F_UI,
-            fontWeight: 600,
-            fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
-            color: '#d6517d', letterSpacing: '6px',
-            marginBottom: 'clamp(24px, 4vh, 48px)', opacity: 0.9,
-          }}>// SELECT DESTINATION</p>
+        <>
+          {/* 바깥 클릭 감지용 backdrop — 메뉴 카드 뒤를 완전히 덮음 */}
+          <div
+            onClick={() => setView('hero')}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              cursor: 'default',
+            }}
+          />
+          {/* 실제 메뉴 컨텐츠 — backdrop 위에 띄움, 클릭 이벤트 전파 막기 */}
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 201,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center',
+              pointerEvents: 'none', // 빈 공간은 아래 backdrop으로 통과
+              animation: 'fadeIn 0.4s ease forwards',
+            }}
+          >
+          <div className="hub-scroll" style={{ pointerEvents: 'auto' }}>
+            <p style={{
+              fontFamily: F_UI, fontWeight: 600,
+              fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+              color: '#d6517d', letterSpacing: '6px',
+              marginBottom: 'clamp(20px, 3vh, 36px)', opacity: 0.9,
+              flexShrink: 0,
+            }}>// SELECT DESTINATION</p>
 
-          <div style={{
-            display: 'flex', flexDirection: 'column',
-            gap: 'clamp(10px, 2vh, 18px)',
-            width: '100%', maxWidth: 'clamp(300px, 50vw, 520px)',
-          }}>
-            <button className="hub-btn" onClick={() => setView('blog')}>
-              <span style={{ color: '#d6517d' }}>&gt;</span>
-              BLOG
-              <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.6, marginLeft: 'auto' }}>ARCHIVE ›</span>
-            </button>
-            {NAV_LINKS.map(({ label, href }) => (
-              <a key={label} className="hub-btn" href={href} target="_blank" rel="noreferrer"
-                style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                <span style={{ color: '#888' }}>&gt;</span>
-                {label}
-                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto' }}>↗ EXTERNAL</span>
-              </a>
-            ))}
-            <div className="hub-btn-muted">
-              <span>&gt;</span> TEAM
-              <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', marginLeft: 'auto' }}>SOON</span>
+            <div style={{
+              display: 'flex', flexDirection: 'column',
+              gap: 'clamp(8px, 1.5vh, 14px)',
+              width: '100%', maxWidth: 'clamp(300px, 50vw, 520px)',
+            }}>
+              <button className="hub-btn" onClick={() => setView('blog')}>
+                <span style={{ color: '#d6517d' }}>&gt;</span>
+                BLOG
+                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.6, marginLeft: 'auto' }}>ARCHIVE ›</span>
+              </button>
+
+              {NAV_LINKS.map(({ label, href }) => (
+                <a key={label} className="hub-btn" href={href} target="_blank" rel="noreferrer"
+                  style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
+                  <span style={{ color: '#888' }}>&gt;</span>
+                  {label}
+                  <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto' }}>↗ EXTERNAL</span>
+                </a>
+              ))}
+
+              <div className="hub-btn-muted">
+                <span>&gt;</span> TEAM
+                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', marginLeft: 'auto' }}>SOON</span>
+              </div>
             </div>
-          </div>
 
-          <button className="to-main-btn" style={{ marginTop: 'clamp(24px, 4vh, 48px)' }}
-            onClick={() => setView('hero')}>
-            ← BACK TO MAIN
-          </button>
-        </div>
+            <button
+              className="to-main-btn"
+              style={{ marginTop: 'clamp(20px, 3vh, 40px)' }}
+              onClick={() => setView('hero')}
+            >
+              ← BACK TO MAIN
+            </button>
+          </div>
+          </div>
+        </>
       )}
 
       {/* ── BLOG ARCHIVE ── */}
@@ -460,14 +496,12 @@ export default function HomePage() {
           <div style={{
             maxWidth: '1100px',
             margin: '0 auto',
-            padding: 'clamp(16px, 3vw, 32px) clamp(16px, 3vw, 32px)',
+            padding: 'clamp(16px, 3vw, 32px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(20px, 4vh, 40px)' }}>
               <button className="back-btn" onClick={() => setView('hub')}>← BACK</button>
               <span style={{
-                fontFamily: F_UI,
-                fontWeight: 600,
-                letterSpacing: '3px',
+                fontFamily: F_UI, fontWeight: 600, letterSpacing: '3px',
                 fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
                 color: '#fff', opacity: 0.5,
               }}>BLOG / ARCHIVE</span>
@@ -486,8 +520,7 @@ export default function HomePage() {
                   padding: 'clamp(16px, 3vw, 30px)',
                 }}>
                   <span style={{
-                    fontFamily: F_TITLE,
-                    fontWeight: 700,
+                    fontFamily: F_TITLE, fontWeight: 700,
                     fontSize: 'clamp(1rem, 2vw, 1.4rem)',
                     color: '#d6517d', marginBottom: '16px', display: 'block',
                     borderBottom: '2px solid #fff', paddingBottom: '10px',
