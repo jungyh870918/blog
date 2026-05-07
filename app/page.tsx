@@ -9,11 +9,13 @@ import ParallaxBg from '@/components/ParallaxBg';
 type View = 'hero' | 'hub' | 'blog';
 
 const NAV_LINKS = [
-  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/' },
-  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/' },
-  { label: 'VOCAB',     href: 'https://streaming-production-40fd.up.railway.app/' },
-  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/' },
-  { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/' },
+  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                        desc: 'READING LOG'       },
+  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                     desc: 'MARKET TRACKER'    },
+  { label: 'VOCAB',     href: 'https://streaming-production-40fd.up.railway.app/',       desc: 'DIALOGUE ENGINE'   },
+  { label: 'VOYAGE',    href: 'https://voyage-student.vercel.app/',                      desc: 'GRAMMAR & READING' },
+  { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',                   desc: 'CERT ARCHIVE'      },
+  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                    desc: 'DB STUDY'          },
+  { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',      desc: 'SIDE PROJECT'      },
 ];
 
 const F_TITLE = "'Orbitron', sans-serif";
@@ -455,12 +457,15 @@ export default function HomePage() {
                 <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.6, marginLeft: 'auto' }}>ARCHIVE ›</span>
               </button>
 
-              {NAV_LINKS.map(({ label, href }) => (
+              {NAV_LINKS.map(({ label, href, desc }) => (
                 <a key={label} className="hub-btn" href={href} target="_blank" rel="noreferrer"
                   style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
                   <span style={{ color: '#888' }}>&gt;</span>
-                  {label}
-                  <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto' }}>↗ EXTERNAL</span>
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span>{label}</span>
+                    {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
+                  </span>
+                  <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>↗</span>
                 </a>
               ))}
 
