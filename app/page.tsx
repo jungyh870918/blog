@@ -5,17 +5,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { categories } from '@/lib/posts';
 import ParallaxBg from '@/components/ParallaxBg';
+import ProfileCard from '@/components/ProfileCard';
 
-type View = 'hero' | 'hub' | 'blog';
+type View = 'hero' | 'hub' | 'blog' | 'profile';
 
+// type: 'log' = 정보/블로그, 'service' = 실제 서비스
 const NAV_LINKS = [
-  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                        desc: 'READING LOG'       },
-  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                     desc: 'MARKET TRACKER'    },
-  { label: 'VOCAB',     href: 'https://streaming-production-40fd.up.railway.app/',       desc: 'DIALOGUE ENGINE'   },
-  { label: 'VOYAGE',    href: 'https://voyage-student.vercel.app/',                      desc: 'GRAMMAR & READING' },
-  { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',                   desc: 'CERT ARCHIVE'      },
-  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                    desc: 'DB STUDY'          },
-  { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',      desc: 'SIDE PROJECT'      },
+  // SERVICE
+  { label: 'VOYAGE',    href: 'https://streaming-production-40fd.up.railway.app/',  type: 'service', desc: 'CONVERSATION'      },
+  { label: 'VOYAGE',    href: 'https://voyage-student.vercel.app/',                 type: 'service', desc: 'GRAMMAR & READING' },
+  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                   type: 'service', desc: 'READING LOG'       },
+  { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',  type: 'service', desc: 'SIDE PROJECT'      },
+  // LOG
+  { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic/',            type: 'log',     desc: 'AI ORCHESTRATION'  },
+  { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',               type: 'log',     desc: 'CERT ARCHIVE'      },
+  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                type: 'log',     desc: 'DB STUDY'          },
+  { label: 'BLOG',      href: '#blog',                                               type: 'log',     desc: 'POST ARCHIVE'      },
+  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                 type: 'log',     desc: 'MARKET TRACKER'    },
+  { label: 'ROBO',      href: 'https://jungyh870918.github.io/hyundai/',             type: 'log',     desc: 'ROBOT SECTOR'      },
 ];
 
 const F_TITLE = "'Orbitron', sans-serif";
@@ -374,7 +381,7 @@ export default function HomePage() {
           color: 'rgba(255,255,255,0.75)',
           padding: '0 20px',
         }}>
-          vibe coder by day, dba by night
+          where human intent becomes machine execution
         </p>
         <button
           onClick={() => { setView('hub'); startBgm(); }}
@@ -448,19 +455,38 @@ export default function HomePage() {
 
             <div style={{
               display: 'flex', flexDirection: 'column',
-              gap: 'clamp(8px, 1.5vh, 14px)',
+              gap: 'clamp(6px, 1.2vh, 12px)',
               width: '100%', maxWidth: 'clamp(300px, 50vw, 520px)',
             }}>
-              <button className="hub-btn" onClick={() => setView('blog')}>
-                <span style={{ color: '#d6517d' }}>&gt;</span>
-                BLOG
-                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.6, marginLeft: 'auto' }}>ARCHIVE ›</span>
+
+              {/* ── PROFILE ── */}
+              <button className="hub-btn" onClick={() => setView('profile')}
+                style={{
+                  borderColor: '#ff3860',
+                  boxShadow: '6px 6px 0px #ff3860',
+                  background: 'rgba(255,56,96,0.08)',
+                  marginBottom: 'clamp(4px, 1vh, 8px)',
+                }}>
+                <span style={{ color: '#ff3860' }}>◈</span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span>PROFILE</span>
+                  <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.5, letterSpacing: '2px', fontWeight: 500 }}>DEVELOPER STATS</span>
+                </span>
+                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
               </button>
 
-              {NAV_LINKS.map(({ label, href, desc }) => (
-                <a key={label} className="hub-btn" href={href} target="_blank" rel="noreferrer"
-                  style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                  <span style={{ color: '#888' }}>&gt;</span>
+              {/* ── SERVICES ── */}
+              <div style={{
+                fontFamily: F_UI, fontWeight: 700, letterSpacing: '4px',
+                fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)',
+                color: '#d6517d', opacity: 0.7,
+                paddingLeft: '4px', marginBottom: '2px',
+              }}>SERVICE</div>
+
+              {NAV_LINKS.filter(l => l.type === 'service').map(({ label, href, desc }, i) => (
+                <a key={`svc-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
+                  style={{ borderColor: '#d6517d', boxShadow: '6px 6px 0px #d6517d' }}>
+                  <span style={{ color: '#d6517d' }}>&gt;</span>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <span>{label}</span>
                     {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
@@ -469,9 +495,45 @@ export default function HomePage() {
                 </a>
               ))}
 
-              <div className="hub-btn-muted">
-                <span>&gt;</span> TEAM
-                <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', marginLeft: 'auto' }}>SOON</span>
+              {/* ── LOGS ── */}
+              <div style={{
+                fontFamily: F_UI, fontWeight: 700, letterSpacing: '4px',
+                fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)',
+                color: '#888', opacity: 0.7,
+                paddingLeft: '4px', marginTop: 'clamp(6px, 1vh, 12px)', marginBottom: '2px',
+              }}>LOG</div>
+
+              {NAV_LINKS.filter(l => l.type === 'log').map(({ label, href, desc }, i) => (
+                label === 'BLOG' ? (
+                  <button key={`log-${i}`} className="hub-btn" onClick={() => setView('blog')}
+                    style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
+                    <span style={{ color: '#888' }}>&gt;</span>
+                    <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <span>{label}</span>
+                      {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
+                    </span>
+                    <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
+                  </button>
+                ) : (
+                  <a key={`log-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
+                    style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
+                    <span style={{ color: '#888' }}>&gt;</span>
+                    <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <span>{label}</span>
+                      {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
+                    </span>
+                    <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>↗</span>
+                  </a>
+                )
+              ))}
+
+              {/* ── COMING SOON ── */}
+              <div className="hub-btn-muted" style={{ marginTop: 'clamp(4px, 0.8vh, 8px)' }}>
+                <span>&gt;</span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span>TEAM</span>
+                  <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', letterSpacing: '2px', fontWeight: 500 }}>COMING SOON</span>
+                </span>
               </div>
             </div>
 
@@ -485,6 +547,37 @@ export default function HomePage() {
           </div>
           </div>
         </>
+      )}
+
+      {/* ── PROFILE ── */}
+      {view === 'profile' && (
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0,
+          minHeight: '100vh',
+          zIndex: 200,
+          paddingTop: 'clamp(56px, 8vh, 80px)',
+          paddingBottom: 'clamp(60px, 10vh, 100px)',
+          overflowY: 'auto',
+        }}>
+          <div style={{
+            maxWidth: '760px',
+            margin: '0 auto',
+            padding: 'clamp(16px, 3vw, 32px)',
+          }}>
+            {/* 헤더 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: 'clamp(16px, 3vh, 28px)' }}>
+              <button className="back-btn" onClick={() => setView('hub')}>← BACK</button>
+              <span style={{
+                fontFamily: F_UI, fontWeight: 600, letterSpacing: '3px',
+                fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+                color: '#fff', opacity: 0.5,
+              }}>PROFILE / DEVELOPER STATS</span>
+            </div>
+
+            <ProfileCard />
+          </div>
+        </div>
       )}
 
       {/* ── BLOG ARCHIVE ── */}
@@ -541,7 +634,7 @@ export default function HomePage() {
                     ) : (
                       cat.posts.map((post) => (
                         <li key={post.slug} style={{ marginBottom: '10px' }}>
-                          <Link href={`/posts/${post.slug}`} className="post-link">
+                          <Link href={`/posts/${post.slug}`} className="post-link" target="_blank" rel="noreferrer">
                             <span style={{ marginRight: '10px', color: '#d6517d' }}>&gt;</span>
                             {post.title}
                           </Link>
