@@ -17,9 +17,10 @@ const NAV_LINKS = [
   { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                   type: 'service', desc: 'READING LOG'       },
   { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',  type: 'service', desc: 'SIDE PROJECT'      },
   // LOG
-  { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic/',            type: 'log',     desc: 'AI ORCHESTRATION'  },
+  { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic-code/',        type: 'log',     desc: 'ORCH SPEC'         },
   { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',               type: 'log',     desc: 'CERT ARCHIVE'      },
   { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                type: 'log',     desc: 'DB STUDY'          },
+  { label: 'STUDY',     href: 'https://jungyh870918.github.io/study/',               type: 'log',     desc: 'INTERVIEW PREP'    },
   { label: 'BLOG',      href: '#blog',                                               type: 'log',     desc: 'POST ARCHIVE'      },
   { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                 type: 'log',     desc: 'MARKET TRACKER'    },
   { label: 'ROBO',      href: 'https://jungyh870918.github.io/hyundai/',             type: 'log',     desc: 'ROBOT SECTOR'      },
