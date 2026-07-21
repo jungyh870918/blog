@@ -21,6 +21,7 @@ const NAV_LINKS = [
   { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',               type: 'log',     desc: 'CERT ARCHIVE'      },
   { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                type: 'log',     desc: 'DB STUDY'          },
   { label: 'STUDY',     href: 'https://jungyh870918.github.io/study/',               type: 'log',     desc: 'INTERVIEW PREP'    },
+  { label: 'SMART FAC', href: 'https://jungyh870918.github.io/pms/',                 type: 'log',     desc: 'SMART FACTORY'     },
   { label: 'BLOG',      href: '#blog',                                               type: 'log',     desc: 'POST ARCHIVE'      },
   { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                 type: 'log',     desc: 'MARKET TRACKER'    },
   { label: 'ROBO',      href: 'https://jungyh870918.github.io/hyundai/',             type: 'log',     desc: 'ROBOT SECTOR'      },
