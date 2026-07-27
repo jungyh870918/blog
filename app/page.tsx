@@ -10,21 +10,30 @@ import ProfileCard from '@/components/ProfileCard';
 type View = 'hero' | 'hub' | 'blog' | 'profile';
 
 // type: 'log' = 정보/블로그, 'service' = 실제 서비스
+// group: LOG 하위 메뉴 구분자 (LOG_GROUPS 참조)
 const NAV_LINKS = [
   // SERVICE
   { label: 'VOYAGE',    href: 'https://streaming-production-40fd.up.railway.app/',  type: 'service', desc: 'CONVERSATION'      },
   { label: 'VOYAGE',    href: 'https://voyage-student.vercel.app/',                 type: 'service', desc: 'GRAMMAR & READING' },
   { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                   type: 'service', desc: 'READING LOG'       },
   { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',  type: 'service', desc: 'SIDE PROJECT'      },
-  // LOG
-  { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic-code/',        type: 'log',     desc: 'ORCH SPEC'         },
-  { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',               type: 'log',     desc: 'CERT ARCHIVE'      },
-  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                type: 'log',     desc: 'DB STUDY'          },
-  { label: 'STUDY',     href: 'https://jungyh870918.github.io/study/',               type: 'log',     desc: 'INTERVIEW PREP'    },
-  { label: 'SMART FAC', href: 'https://jungyh870918.github.io/pms/',                 type: 'log',     desc: 'SMART FACTORY'     },
-  { label: 'BLOG',      href: '#blog',                                               type: 'log',     desc: 'POST ARCHIVE'      },
-  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                 type: 'log',     desc: 'MARKET TRACKER'    },
-  { label: 'ROBO',      href: 'https://jungyh870918.github.io/hyundai/',             type: 'log',     desc: 'ROBOT SECTOR'      },
+  // LOG / ENGINEERING
+  { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic-code/',        type: 'log', group: 'eng',    desc: 'ORCH SPEC'      },
+  { label: 'SMART FAC', href: 'https://pms-nine-blond.vercel.app/',                  type: 'log', group: 'eng',    desc: 'SMART FACTORY'  },
+  // LOG / LEARNING (개인 공부)
+  { label: 'SQLP',      href: 'https://jungyh870918.github.io/sqlp/',                type: 'log', group: 'learn',  desc: 'CERT ARCHIVE'   },
+  { label: 'DBA',       href: 'https://jungyh870918.github.io/dba/',                 type: 'log', group: 'learn',  desc: 'DB STUDY'       },
+  { label: 'STUDY',     href: 'https://jungyh870918.github.io/study/',               type: 'log', group: 'learn',  desc: 'INTERVIEW PREP' },
+  { label: 'BLOG',      href: '#blog',                                               type: 'log', group: 'learn',  desc: 'POST ARCHIVE'   },
+  // LOG / MARKET (주식)
+  { label: 'STOCKS',    href: 'https://stock-nine-blue.vercel.app/',                 type: 'log', group: 'market', desc: 'MARKET TRACKER' },
+  { label: 'ROBO',      href: 'https://jungyh870918.github.io/hyundai/',             type: 'log', group: 'market', desc: 'ROBOT SECTOR'   },
+];
+
+const LOG_GROUPS = [
+  { id: 'eng',    label: 'ENGINEERING', desc: 'SPEC & PROJECT'  },
+  { id: 'learn',  label: 'LEARNING',    desc: 'PERSONAL STUDY'  },
+  { id: 'market', label: 'MARKET',      desc: 'STOCKS & SECTOR' },
 ];
 
 const F_TITLE = "'Orbitron', sans-serif";
@@ -41,6 +50,11 @@ const TICKER_ITEMS = [
 export default function HomePage() {
   const [view, setView] = useState<View>('hero');
   const overlayActive = view !== 'hero';
+
+  // LOG 하위 메뉴 열림 상태 (기본: 모두 접힘)
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const toggleGroup = (id: string) =>
+    setOpenGroups(prev => ({ ...prev, [id]: !prev[id] }));
 
   // BGM
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -171,6 +185,47 @@ export default function HomePage() {
           transform: translate(-2px, -2px);
           box-shadow: 8px 8px 0px #000;
         }
+        /* LOG 하위 메뉴 헤더 */
+        .sub-head {
+          background: rgba(0,0,0,0.6);
+          color: #bbb;
+          border: 2px solid #3a3a3a;
+          border-left: 4px solid #666;
+          padding: 14px 20px;
+          font-family: 'Rajdhani', sans-serif;
+          font-weight: 700;
+          font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+          letter-spacing: 3px;
+          cursor: pointer;
+          text-align: left;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          width: 100%;
+          box-sizing: border-box;
+          transition: color 0.15s, border-color 0.15s, background 0.15s;
+        }
+        .sub-head:hover { color: #fff; border-color: #888; border-left-color: #d6517d; }
+        .sub-head.open { color: #fff; border-left-color: #d6517d; background: rgba(214,81,125,0.06); }
+        .sub-head-caret {
+          color: #d6517d;
+          font-size: 0.8rem;
+          transition: transform 0.2s ease;
+          flex-shrink: 0;
+        }
+        .sub-head.open .sub-head-caret { transform: rotate(90deg); }
+
+        /* LOG 하위 메뉴 항목 리스트 */
+        .sub-list {
+          display: flex;
+          flex-direction: column;
+          gap: clamp(6px, 1.2vh, 12px);
+          padding: clamp(6px, 1.2vh, 12px) 0 clamp(4px, 0.8vh, 8px) clamp(12px, 2vw, 22px);
+          border-left: 2px solid rgba(214,81,125,0.35);
+          margin-left: clamp(6px, 1vw, 10px);
+          animation: fadeUp 0.25s ease;
+        }
+
         .hub-btn-muted {
           background: rgba(0,0,0,0.5);
           color: #555;
@@ -505,29 +560,56 @@ export default function HomePage() {
                 paddingLeft: '4px', marginTop: 'clamp(6px, 1vh, 12px)', marginBottom: '2px',
               }}>LOG</div>
 
-              {NAV_LINKS.filter(l => l.type === 'log').map(({ label, href, desc }, i) => (
-                label === 'BLOG' ? (
-                  <button key={`log-${i}`} className="hub-btn" onClick={() => setView('blog')}
-                    style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                    <span style={{ color: '#888' }}>&gt;</span>
-                    <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span>{label}</span>
-                      {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
-                    </span>
-                    <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
-                  </button>
-                ) : (
-                  <a key={`log-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
-                    style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                    <span style={{ color: '#888' }}>&gt;</span>
-                    <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span>{label}</span>
-                      {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
-                    </span>
-                    <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>↗</span>
-                  </a>
-                )
-              ))}
+              {LOG_GROUPS.map((group) => {
+                const items = NAV_LINKS.filter(l => l.type === 'log' && l.group === group.id);
+                const open = !!openGroups[group.id];
+                return (
+                  <div key={group.id}>
+                    <button
+                      className={`sub-head${open ? ' open' : ''}`}
+                      onClick={() => toggleGroup(group.id)}
+                      aria-expanded={open}
+                    >
+                      <span className="sub-head-caret">▸</span>
+                      <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <span>{group.label}</span>
+                        <span style={{ fontSize: 'clamp(0.5rem, 0.85vw, 0.62rem)', opacity: 0.4, letterSpacing: '2px', fontWeight: 500 }}>{group.desc}</span>
+                      </span>
+                      <span style={{ fontSize: 'clamp(0.5rem, 0.85vw, 0.62rem)', opacity: 0.35, marginLeft: 'auto', flexShrink: 0 }}>
+                        {String(items.length).padStart(2, '0')}
+                      </span>
+                    </button>
+
+                    {open && (
+                      <div className="sub-list">
+                        {items.map(({ label, href, desc }, i) => (
+                          label === 'BLOG' ? (
+                            <button key={`log-${group.id}-${i}`} className="hub-btn" onClick={() => setView('blog')}
+                              style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
+                              <span style={{ color: '#888' }}>&gt;</span>
+                              <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span>{label}</span>
+                                {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
+                              </span>
+                              <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
+                            </button>
+                          ) : (
+                            <a key={`log-${group.id}-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
+                              style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
+                              <span style={{ color: '#888' }}>&gt;</span>
+                              <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span>{label}</span>
+                                {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
+                              </span>
+                              <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>↗</span>
+                            </a>
+                          )
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
               {/* ── COMING SOON ── */}
               <div className="hub-btn-muted" style={{ marginTop: 'clamp(4px, 0.8vh, 8px)' }}>
