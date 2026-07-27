@@ -1,9 +1,19 @@
 @import "tailwindcss";
 
+/* ─── CELESTE 팔레트 ─────────────────────────────────────────
+   게임 스크린샷 기준으로 뽑은 값. 사이버펑크 네온핑크를 대체한다. */
 :root {
-  --punk-pink: #d6517d;
-  --punk-neon: #ff3860;
-  --blog-primary: #4f46e5; /* Indigo 600 */
+  --cel-night: #1e1138; /* 심야 보라 — 배경 베이스 */
+  --cel-dusk: #55356d; /* 황혼 보라 — 산 실루엣 */
+  --cel-blue: #63c5da; /* 대시 크리스탈 시안 — 주 액센트 */
+  --cel-red: #dd5a5a; /* 마들린 머리색 — 보조 액센트 */
+  --cel-gold: #f2b44c; /* 딸기/포인트 */
+  --cel-snow: #f0f2f5; /* 설원 흰색 — 본문 텍스트 */
+  --cel-panel: rgba(30, 17, 56, 0.72); /* 반투명 메뉴 패널 */
+
+  /* 밝은 배경(포스트 페이지)에서 대비 확보용 진한 버전 */
+  --cel-blue-deep: #2f6b80;
+  --blog-primary: var(--cel-blue-deep);
 }
 
 /* --- Blog Post Content Styles --- */
@@ -37,7 +47,7 @@
 }
 
 .post-content code {
-  @apply bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded font-mono text-[0.9em];
+  @apply bg-slate-100 text-[#2f6b80] px-1.5 py-0.5 rounded font-mono text-[0.9em];
 }
 
 .post-content pre {
@@ -50,7 +60,7 @@
 
 /* 💡 포인트/예시 박스 */
 .post-content .example-box {
-  @apply bg-indigo-50 border-l-4 border-indigo-500 p-6 my-8 rounded-r-xl shadow-sm text-slate-800;
+  @apply bg-[#eaf5f8] border-l-4 border-[#63c5da] p-6 my-8 rounded-r-xl shadow-sm text-slate-800;
 }
 
 /* 🤖 AI 에이전트/팁 박스 */
@@ -60,7 +70,7 @@
 
 /* ➗ 수식 영역 */
 .post-content .formula {
-  @apply bg-slate-900 text-indigo-100 font-mono text-center p-8 my-10 rounded-2xl shadow-lg overflow-x-auto text-xl;
+  @apply bg-slate-900 text-[#d6eef4] font-mono text-center p-8 my-10 rounded-2xl shadow-lg overflow-x-auto text-xl;
 }
 
 /* 📊 데이터 테이블 */
@@ -86,7 +96,7 @@
 }
 
 .post-content .reference-list li a {
-  @apply text-indigo-600 hover:text-indigo-800 font-medium no-underline flex items-center;
+  @apply text-[#2f6b80] hover:text-[#1d4a5c] font-medium no-underline flex items-center;
 }
 
 .post-content .reference-list li a::before {

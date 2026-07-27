@@ -45,11 +45,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
           <div className="relative max-w-3xl mx-auto px-6">
             <nav className="mb-8 flex items-center gap-2">
-              <Link href="/" className="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+              <Link href="/" className="text-sm font-bold text-[#2f6b80] hover:text-[#1d4a5c] transition-colors">
                 ← BACK TO HUB
               </Link>
               <span className="text-slate-300">/</span>
-              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded uppercase tracking-wider">
+              <span className="px-2 py-0.5 bg-[#e2f1f5] text-[#26596b] text-xs font-bold rounded uppercase tracking-wider">
                 {post.category || 'System'}
               </span>
             </nav>
@@ -66,7 +66,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
             <div className="mt-10 flex items-center gap-4 text-sm text-slate-400 font-medium">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-500 font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-[#e2f1f5] border border-[#bfdfe8] flex items-center justify-center text-[#3f8ca3] font-bold text-xs">
                   DY
                 </div>
                 <span className="text-slate-600">Daniel Jung</span>
@@ -95,7 +95,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </p>
             <Link 
               href="/"
-              className="inline-flex items-center justify-center px-6 py-3 bg-slate-900 text-white font-bold rounded-full hover:bg-indigo-600 transition-all shadow-lg hover:shadow-indigo-200"
+              className="inline-flex items-center justify-center px-6 py-3 bg-slate-900 text-white font-bold rounded-full hover:bg-[#2f6b80] transition-all shadow-lg hover:shadow-[#bfdfe8]"
             >
               다른 프로토콜 탐색하기
             </Link>

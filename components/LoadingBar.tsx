@@ -86,9 +86,9 @@ export default function LoadingBar() {
           position: fixed;
           top: 0; left: 0;
           width: 0%;
-          height: 4px;
-          background: linear-gradient(to right, #d6517d, #ff3860, #ff8c69);
-          box-shadow: 0 0 10px #ff3860, 0 0 20px #d6517d;
+          height: 3px;
+          background: linear-gradient(to right, #9be6f2, #63c5da 45%, #a394c7 75%, #dd5a5a);
+          box-shadow: 0 0 12px rgba(99,197,218,0.8), 0 0 28px rgba(163,148,199,0.5);
           z-index: 9999;
           pointer-events: none;
         }
@@ -96,27 +96,29 @@ export default function LoadingBar() {
           position: fixed;
           top: 50%; left: 50%;
           transform: translate(-50%, -50%);
-          font-family: 'Press Start 2P', cursive;
-          font-size: clamp(1rem, 3vw, 2rem);
-          color: #d6517d;
-          text-shadow: 6px 6px 0px #000;
+          font-family: 'Pixelify Sans', monospace;
+          font-weight: 500;
+          font-size: clamp(0.95rem, 2.6vw, 1.7rem);
+          letter-spacing: 0.18em;
+          color: var(--cel-snow, #f0f2f5);
+          text-shadow: 0 0 24px rgba(99,197,218,0.75), 0 4px 20px rgba(10,5,20,0.9);
           z-index: 9998;
           pointer-events: none;
           white-space: nowrap;
-          animation: lb-blink 0.8s step-start infinite;
+          animation: lb-blink 1.4s ease-in-out infinite;
         }
         .lb-hidden {
           visibility: hidden !important;
         }
         @keyframes lb-blink {
-          0%, 49% { opacity: 1; }
-          50%, 100% { opacity: 0.5; }
+          0%, 100% { opacity: 1;    transform: translate(-50%, -50%) scale(1); }
+          50%      { opacity: 0.55; transform: translate(-50%, -50%) scale(0.97); }
         }
       `}</style>
 
       <div ref={barRef} className="lb-bar lb-hidden" />
       <div ref={textRef} className="lb-text lb-hidden">
-        MOVING TO PAGES...
+        CLIMBING...
       </div>
     </>
   );

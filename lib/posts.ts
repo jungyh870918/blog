@@ -9,7 +9,8 @@ export type Post = {
 export type Category = {
   id: string;
   label: string;
-  posts: { slug: string; title: string }[];
+  // href가 있으면 /posts/[slug] 대신 해당 경로로 링크 (전용 페이지용)
+  posts: { slug: string; title: string; href?: string }[];
   comingSoon?: boolean;
 };
 
@@ -31,6 +32,13 @@ export const categories: Category[] = [
     posts: [
       { slug: 'ts-1', title: 'GENERICS' },
       { slug: 'ts-2', title: 'CONDITIONAL' },
+    ],
+  },
+  {
+    id: 'dt',
+    label: 'DIGITAL TWIN',
+    posts: [
+      { slug: 'dt-editor-glossary', title: 'GLOSSARY', href: '/glossary/dt-editor' },
     ],
   },
   {

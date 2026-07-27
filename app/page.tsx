@@ -36,9 +36,12 @@ const LOG_GROUPS = [
   { id: 'market', label: 'MARKET',      desc: 'STOCKS & SECTOR' },
 ];
 
-const F_TITLE = "'Orbitron', sans-serif";
-const F_UI    = "'Rajdhani', sans-serif";
-const F_MONO  = "'VT323', monospace";
+const F_TITLE = "'Jost', sans-serif";
+const F_UI    = "'Jost', sans-serif";
+const F_MONO  = "'Pixelify Sans', monospace";
+
+// Celeste 메뉴 특유의 "톡" 튀는 선택 모션
+const BOUNCE = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
 
 const TICKER_ITEMS = [
   'jungyh870918@gmail.com',
@@ -105,8 +108,8 @@ export default function HomePage() {
   return (
     <div style={{
       margin: 0, padding: 0, minHeight: '100vh',
-      backgroundColor: '#000', color: '#fff',
-      fontFamily: F_MONO,
+      backgroundColor: '#140b26', color: 'var(--cel-snow)',
+      fontFamily: F_UI,
       // hub/hero: overflow hidden, blog: scroll
       overflow: view === 'blog' ? 'auto' : 'hidden',
     }}>
@@ -119,31 +122,70 @@ export default function HomePage() {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        @keyframes cursor-blink {
-          0%, 49%  { opacity: 1; }
-          50%, 100% { opacity: 0; }
+        @keyframes crystal-pulse {
+          0%, 100% { opacity: 1;    transform: rotate(45deg) scale(1); }
+          50%      { opacity: 0.72; transform: rotate(45deg) scale(0.88); }
+        }
+        @keyframes cta-float {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-5px); }
         }
         @keyframes ticker {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
 
+        /* 대시 크리스탈 — 45도로 세운 마름모 */
         .title-cursor {
           display: inline-block;
-          width: clamp(14px, 2vw, 28px);
-          height: 0.9em;
-          background: #ff3860;
-          margin-left: 10px;
+          width: clamp(13px, 1.7vw, 24px);
+          height: clamp(13px, 1.7vw, 24px);
+          background: linear-gradient(140deg, #9be6f2, #63c5da 55%, #3f9db3);
+          margin-left: 18px;
           vertical-align: middle;
+          transform: rotate(45deg);
+          border-radius: 4px;
           box-shadow:
-            0 0 8px  #ff3860,
-            0 0 20px #ff3860,
-            0 0 45px rgba(255,56,96,0.9),
-            0 0 80px rgba(255,56,96,0.5);
-          animation: cursor-blink 0.85s step-end infinite;
+            0 0 12px rgba(99,197,218,0.9),
+            0 0 34px rgba(99,197,218,0.55),
+            0 0 70px rgba(99,197,218,0.3);
+          animation: crystal-pulse 2.4s ease-in-out infinite;
           flex-shrink: 0;
-          border-radius: 2px;
         }
+
+        /* 히어로 CTA — 마들린 레드 알약 버튼 */
+        .cta-btn {
+          background: linear-gradient(150deg, #e87a7a, #dd5a5a 55%, #b94747);
+          color: #fff5f5;
+          padding: clamp(15px, 2.3vw, 22px) clamp(30px, 4vw, 54px);
+          font-family: 'Jost', sans-serif;
+          font-weight: 600;
+          letter-spacing: 0.2em;
+          border: 1px solid rgba(255,255,255,0.22);
+          border-radius: 999px;
+          box-shadow:
+            0 10px 30px rgba(10,5,20,0.5),
+            0 0 40px rgba(221,90,90,0.28),
+            inset 0 1px 0 rgba(255,255,255,0.28);
+          font-size: clamp(1rem, 2vw, 1.35rem);
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 7px;
+          animation: cta-float 4.5s ease-in-out infinite;
+          transition: transform 0.26s ${BOUNCE}, box-shadow 0.25s ease, filter 0.2s ease;
+        }
+        .cta-btn:hover, .cta-btn:focus-visible {
+          transform: scale(1.06);
+          filter: brightness(1.08);
+          box-shadow:
+            0 14px 40px rgba(10,5,20,0.55),
+            0 0 60px rgba(221,90,90,0.45),
+            inset 0 1px 0 rgba(255,255,255,0.35);
+          outline: none;
+        }
+        .cta-btn:active { transform: scale(0.97); }
 
         /* 허브 스크롤 컨테이너 */
         .hub-scroll {
@@ -159,43 +201,95 @@ export default function HomePage() {
           box-sizing: border-box;
         }
 
+        /* ── Celeste 메뉴 버튼 ──
+           원작 UI는 스프라이트가 아니라 "반투명 라운드 패널 + 흰 글씨 +
+           선택 시 살짝 튀는 스케일" 이다. 하드 픽셀 그림자 대신
+           부드러운 글로우와 bounce easing으로 그 느낌을 낸다. */
         .hub-btn {
-          background: rgba(0,0,0,0.9);
-          color: #fff;
-          border: 3px solid #d6517d;
-          box-shadow: 6px 6px 0px #d6517d;
-          padding: 22px 32px;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 700;
-          font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+          background: var(--cel-panel);
+          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+          color: var(--cel-snow);
+          border: 1px solid rgba(240,242,245,0.14);
+          border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(10,5,20,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+          padding: 18px 26px;
+          font-family: 'Jost', sans-serif;
+          font-weight: 600;
+          font-size: clamp(1.05rem, 1.7vw, 1.32rem);
           cursor: pointer;
           text-align: left;
-          letter-spacing: 3px;
+          letter-spacing: 2px;
           display: flex;
           align-items: center;
           gap: 16px;
-          transition: background 0.15s, transform 0.15s;
           text-decoration: none;
           width: 100%;
           box-sizing: border-box;
           flex-shrink: 0;
+          position: relative;
+          overflow: hidden;
+          transition:
+            transform 0.24s ${BOUNCE},
+            background 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
         }
-        .hub-btn:hover, .hub-btn:active {
-          background: #d6517d;
-          transform: translate(-2px, -2px);
-          box-shadow: 8px 8px 0px #000;
+        /* 선택 표시 — 왼쪽에서 자라나는 액센트 바 */
+        .hub-btn::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 50%;
+          transform: translateY(-50%);
+          width: 3px; height: 0;
+          background: var(--cel-blue);
+          border-radius: 0 3px 3px 0;
+          box-shadow: 0 0 12px var(--cel-blue);
+          transition: height 0.24s ${BOUNCE};
         }
+        .hub-btn:hover::before, .hub-btn:focus-visible::before { height: 60%; }
+        .hub-btn:hover, .hub-btn:focus-visible {
+          background: rgba(99,197,218,0.14);
+          border-color: rgba(99,197,218,0.5);
+          transform: translateX(8px) scale(1.015);
+          box-shadow: 0 12px 32px rgba(10,5,20,0.5), 0 0 26px rgba(99,197,218,0.22);
+          outline: none;
+        }
+        .hub-btn:active { transform: translateX(8px) scale(0.985); }
+
+        /* PROFILE — 마들린 레드 */
+        .hub-btn-accent {
+          background: rgba(221,90,90,0.12);
+          border-color: rgba(221,90,90,0.4);
+        }
+        .hub-btn-accent::before { background: var(--cel-red); box-shadow: 0 0 12px var(--cel-red); }
+        .hub-btn-accent:hover, .hub-btn-accent:focus-visible {
+          background: rgba(221,90,90,0.2);
+          border-color: rgba(221,90,90,0.7);
+          box-shadow: 0 12px 32px rgba(10,5,20,0.5), 0 0 26px rgba(221,90,90,0.25);
+        }
+
+        /* LOG 항목 — 한 단계 죽인 톤 */
+        .hub-btn-dim {
+          background: rgba(20,11,38,0.6);
+          border-color: rgba(240,242,245,0.09);
+          font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+          padding: 15px 22px;
+        }
+
         /* LOG 하위 메뉴 헤더 */
         .sub-head {
-          background: rgba(0,0,0,0.6);
-          color: #bbb;
-          border: 2px solid #3a3a3a;
-          border-left: 4px solid #666;
-          padding: 14px 20px;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 700;
-          font-size: clamp(0.9rem, 1.4vw, 1.1rem);
-          letter-spacing: 3px;
+          background: rgba(20,11,38,0.5);
+          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+          color: rgba(240,242,245,0.62);
+          border: 1px solid rgba(240,242,245,0.08);
+          border-radius: 10px;
+          padding: 13px 20px;
+          font-family: 'Jost', sans-serif;
+          font-weight: 600;
+          font-size: clamp(0.88rem, 1.35vw, 1.05rem);
+          letter-spacing: 2px;
           cursor: pointer;
           text-align: left;
           display: flex;
@@ -203,14 +297,18 @@ export default function HomePage() {
           gap: 14px;
           width: 100%;
           box-sizing: border-box;
-          transition: color 0.15s, border-color 0.15s, background 0.15s;
+          transition: color 0.2s, border-color 0.2s, background 0.2s;
         }
-        .sub-head:hover { color: #fff; border-color: #888; border-left-color: #d6517d; }
-        .sub-head.open { color: #fff; border-left-color: #d6517d; background: rgba(214,81,125,0.06); }
+        .sub-head:hover { color: var(--cel-snow); border-color: rgba(99,197,218,0.35); }
+        .sub-head.open {
+          color: var(--cel-snow);
+          border-color: rgba(99,197,218,0.45);
+          background: rgba(99,197,218,0.08);
+        }
         .sub-head-caret {
-          color: #d6517d;
+          color: var(--cel-blue);
           font-size: 0.8rem;
-          transition: transform 0.2s ease;
+          transition: transform 0.24s ${BOUNCE};
           flex-shrink: 0;
         }
         .sub-head.open .sub-head-caret { transform: rotate(90deg); }
@@ -221,21 +319,21 @@ export default function HomePage() {
           flex-direction: column;
           gap: clamp(6px, 1.2vh, 12px);
           padding: clamp(6px, 1.2vh, 12px) 0 clamp(4px, 0.8vh, 8px) clamp(12px, 2vw, 22px);
-          border-left: 2px solid rgba(214,81,125,0.35);
+          border-left: 2px solid rgba(99,197,218,0.35);
           margin-left: clamp(6px, 1vw, 10px);
           animation: fadeUp 0.25s ease;
         }
 
         .hub-btn-muted {
-          background: rgba(0,0,0,0.5);
-          color: #555;
-          border: 3px solid #333;
-          box-shadow: none;
-          padding: 22px 32px;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 700;
-          font-size: clamp(1.1rem, 1.8vw, 1.4rem);
-          letter-spacing: 3px;
+          background: rgba(20,11,38,0.4);
+          color: rgba(240,242,245,0.28);
+          border: 1px dashed rgba(240,242,245,0.12);
+          border-radius: 12px;
+          padding: 18px 26px;
+          font-family: 'Jost', sans-serif;
+          font-weight: 600;
+          font-size: clamp(1.05rem, 1.7vw, 1.32rem);
+          letter-spacing: 2px;
           display: flex;
           align-items: center;
           gap: 16px;
@@ -245,41 +343,51 @@ export default function HomePage() {
         }
         .post-link {
           text-decoration: none;
-          color: #fff;
-          font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+          color: rgba(240,242,245,0.88);
+          font-family: 'Jost', sans-serif;
+          font-weight: 500;
+          font-size: clamp(0.95rem, 1.7vw, 1.15rem);
           display: flex;
           align-items: center;
-          transition: color 0.15s, padding-left 0.15s;
-          padding: 4px 0;
+          transition: color 0.2s, padding-left 0.24s ${BOUNCE};
+          padding: 5px 0;
         }
-        .post-link:hover { color: #d6517d; padding-left: 10px; }
+        .post-link:hover { color: var(--cel-blue); padding-left: 10px; }
         .back-btn {
-          background: transparent;
-          border: 2px solid #d6517d;
-          color: #d6517d;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 700;
-          font-size: clamp(0.8rem, 1.2vw, 1rem);
+          background: rgba(20,11,38,0.55);
+          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(99,197,218,0.4);
+          border-radius: 999px;
+          color: var(--cel-blue);
+          font-family: 'Jost', sans-serif;
+          font-weight: 600;
+          font-size: clamp(0.78rem, 1.15vw, 0.95rem);
           letter-spacing: 2px;
-          padding: 8px 16px;
+          padding: 8px 18px;
           cursor: pointer;
-          transition: background 0.15s, color 0.15s;
+          transition: background 0.2s, color 0.2s, transform 0.24s ${BOUNCE}, box-shadow 0.2s;
           white-space: nowrap;
         }
-        .back-btn:hover { background: #d6517d; color: #fff; }
+        .back-btn:hover {
+          background: rgba(99,197,218,0.18);
+          color: var(--cel-snow);
+          transform: translateX(-4px) scale(1.04);
+          box-shadow: 0 0 20px rgba(99,197,218,0.25);
+        }
         .to-main-btn {
           background: transparent;
           border: none;
-          color: #888;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 600;
+          color: rgba(240,242,245,0.4);
+          font-family: 'Jost', sans-serif;
+          font-weight: 500;
           font-size: clamp(0.85rem, 1.2vw, 1rem);
           cursor: pointer;
           letter-spacing: 3px;
-          transition: color 0.15s;
+          transition: color 0.2s, transform 0.24s ${BOUNCE};
           flex-shrink: 0;
         }
-        .to-main-btn:hover { color: #d6517d; }
+        .to-main-btn:hover { color: var(--cel-blue); transform: translateX(-5px); }
 
         /* 전광판 */
         .ticker-wrap {
@@ -296,7 +404,7 @@ export default function HomePage() {
         }
         .ticker-inner:hover { animation-play-state: paused; }
         .ticker-item {
-          font-family: 'Rajdhani', sans-serif;
+          font-family: 'Jost', sans-serif;
           font-size: clamp(0.7rem, 1.1vw, 0.85rem);
           font-weight: 600;
           padding: 0 clamp(14px, 2.5vw, 28px);
@@ -304,15 +412,15 @@ export default function HomePage() {
           letter-spacing: 2px;
         }
         .ticker-item.email {
-          color: #d6517d;
-          text-shadow: 0 0 8px #d6517d;
+          color: var(--cel-gold);
+          text-shadow: 0 0 10px rgba(242,180,76,0.6);
         }
         .ticker-sep {
-          color: #d6517d;
-          opacity: 0.5;
+          color: var(--cel-blue);
+          opacity: 0.45;
           font-size: clamp(0.45rem, 0.9vw, 0.6rem);
           align-self: center;
-          font-family: 'Rajdhani', sans-serif;
+          font-family: 'Jost', sans-serif;
         }
 
         /* BGM 컨트롤 */
@@ -323,27 +431,29 @@ export default function HomePage() {
           display: flex;
           align-items: center;
           gap: 10px;
-          background: rgba(0,0,0,0.75);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(214,81,125,0.35);
-          border-radius: 4px;
-          padding: 7px 14px;
-          transition: opacity 0.3s;
+          background: var(--cel-panel);
+          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(99,197,218,0.25);
+          border-radius: 999px;
+          padding: 7px 16px;
+          box-shadow: 0 6px 20px rgba(10,5,20,0.45);
+          transition: opacity 0.3s, border-color 0.2s;
         }
-        .bgm-bar:hover { border-color: #d6517d; }
+        .bgm-bar:hover { border-color: rgba(99,197,218,0.6); }
         .bgm-toggle {
           background: none;
           border: none;
           cursor: pointer;
-          color: #d6517d;
+          color: var(--cel-blue);
           font-size: 1rem;
           padding: 0;
           line-height: 1;
-          transition: color 0.15s, transform 0.15s;
+          transition: color 0.2s, transform 0.24s ${BOUNCE};
         }
-        .bgm-toggle:hover { color: #ff3860; transform: scale(1.15); }
+        .bgm-toggle:hover { color: var(--cel-snow); transform: scale(1.2); }
         .bgm-track {
-          font-family: 'Rajdhani', sans-serif;
+          font-family: 'Jost', sans-serif;
           font-weight: 600;
           font-size: 0.7rem;
           color: rgba(255,255,255,0.45);
@@ -352,7 +462,7 @@ export default function HomePage() {
         }
         input[type=range].bgm-slider {
           width: 68px;
-          accent-color: #d6517d;
+          accent-color: #63c5da;
           cursor: pointer;
         }
       `}</style>
@@ -363,7 +473,7 @@ export default function HomePage() {
       {/* 다크 오버레이 — 0.45로 낮춰서 배경 살짝 보이게 */}
       <div style={{
         position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5,
-        background: 'rgba(0,0,0,0.45)',
+        background: 'rgba(20,11,38,0.55)',
         opacity: overlayActive ? 1 : 0,
         transition: 'opacity 0.8s ease',
         pointerEvents: 'none',
@@ -373,17 +483,17 @@ export default function HomePage() {
       <nav style={{
         display: 'flex', alignItems: 'center',
         height: 'clamp(36px, 5vh, 48px)',
-        background: 'rgba(0,0,0,0.85)',
-        borderBottom: '2px solid #d6517d',
-        backdropFilter: 'blur(5px)',
+        background: 'rgba(20,11,38,0.78)',
+        borderBottom: '1px solid rgba(99,197,218,0.25)',
+        backdropFilter: 'blur(10px)',
         position: 'fixed', width: '100%', boxSizing: 'border-box', top: 0, zIndex: 101,
         gap: '12px',
         paddingRight: 'clamp(10px, 2vw, 20px)',
       }}>
         <div style={{
-          background: '#d6517d',
-          color: '#000', fontFamily: F_UI,
-          fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)',
+          background: 'linear-gradient(140deg, #9be6f2, #63c5da)',
+          color: '#102b33', fontFamily: F_MONO, fontWeight: 600,
+          fontSize: 'clamp(0.45rem, 0.85vw, 0.6rem)',
           padding: '0 clamp(8px, 1.5vw, 14px)',
           height: '100%', display: 'flex', alignItems: 'center',
           whiteSpace: 'nowrap', flexShrink: 0,
@@ -404,9 +514,9 @@ export default function HomePage() {
         </div>
 
         <div style={{ display: 'flex', gap: 'clamp(8px, 1.5vw, 14px)', flexShrink: 0 }}>
-          <Image src="/assets/facebook_32x32.png" alt="FB"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 4px #d6517d)', cursor: 'pointer' }} />
-          <Image src="/assets/twitter_32x32.png"  alt="TW"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 4px #d6517d)', cursor: 'pointer' }} />
-          <Image src="/assets/email_32x32.png"    alt="MAIL" width={22} height={22} style={{ filter: 'drop-shadow(0 0 4px #d6517d)', cursor: 'pointer' }} />
+          <Image src="/assets/facebook_32x32.png" alt="FB"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 6px rgba(99,197,218,0.7))', cursor: 'pointer' }} />
+          <Image src="/assets/twitter_32x32.png"  alt="TW"   width={22} height={22} style={{ filter: 'drop-shadow(0 0 6px rgba(99,197,218,0.7))', cursor: 'pointer' }} />
+          <Image src="/assets/email_32x32.png"    alt="MAIL" width={22} height={22} style={{ filter: 'drop-shadow(0 0 6px rgba(99,197,218,0.7))', cursor: 'pointer' }} />
         </div>
       </nav>
 
@@ -421,41 +531,29 @@ export default function HomePage() {
         pointerEvents: overlayActive ? 'none' : 'auto',
       }}>
         <h1 style={{
-          fontFamily: F_TITLE, fontWeight: 900,
-          fontSize: 'clamp(1.8rem, 5.5vw, 4.5rem)',
-          textShadow: '0 0 30px rgba(214,81,125,0.6), 4px 4px 0px rgba(214,81,125,0.4)',
-          letterSpacing: '0.05em', marginBottom: '20px',
+          fontFamily: F_TITLE, fontWeight: 300,
+          fontSize: 'clamp(2rem, 6vw, 4.8rem)',
+          textShadow: '0 0 40px rgba(99,197,218,0.35), 0 6px 30px rgba(10,5,20,0.8)',
+          letterSpacing: '0.14em', marginBottom: '22px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span>&gt;&nbsp;JUNGYH</span>
+          <span>JUNGYH</span>
           <span className="title-cursor" />
         </h1>
         <p style={{
           fontFamily: F_UI, fontWeight: 500,
           fontSize: 'clamp(0.9rem, 2vw, 1.3rem)',
-          maxWidth: '700px', marginBottom: '48px',
+          maxWidth: '700px', marginBottom: '52px',
           letterSpacing: '0.25em',
-          color: 'rgba(255,255,255,0.75)',
+          color: 'rgba(240,242,245,0.72)',
+          textShadow: '0 2px 16px rgba(10,5,20,0.8)',
           padding: '0 20px',
         }}>
           where human intent becomes machine execution
         </p>
-        <button
-          onClick={() => { setView('hub'); startBgm(); }}
-          style={{
-            background: '#d6517d', color: 'white',
-            padding: 'clamp(16px, 2.5vw, 25px) clamp(28px, 4vw, 50px)',
-            fontFamily: F_UI, fontWeight: 700, letterSpacing: '0.2em',
-            border: 'none', boxShadow: '6px 6px 0px rgba(0,0,0,0.6)',
-            fontSize: 'clamp(1rem, 2vw, 1.4rem)',
-            cursor: 'pointer', display: 'flex', flexDirection: 'column',
-            alignItems: 'center', gap: '8px',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#ff3860'; e.currentTarget.style.transform = 'scale(1.05)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#d6517d'; e.currentTarget.style.transform = 'scale(1)'; }}
-        >
+        <button className="cta-btn" onClick={() => { setView('hub'); startBgm(); }}>
           <span>READ.ME</span>
-          <span style={{ fontFamily: F_UI, fontWeight: 500, letterSpacing: '0.15em', fontSize: 'clamp(0.7rem, 1vw, 0.85rem)', opacity: 0.75 }}>[ YOU FOUND IT ]</span>
+          <span style={{ fontWeight: 400, letterSpacing: '0.15em', fontSize: 'clamp(0.7rem, 1vw, 0.85rem)', opacity: 0.7 }}>[ YOU FOUND IT ]</span>
         </button>
       </div>
 
@@ -505,10 +603,11 @@ export default function HomePage() {
             <p style={{
               fontFamily: F_UI, fontWeight: 600,
               fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
-              color: '#d6517d', letterSpacing: '6px',
-              marginBottom: 'clamp(20px, 3vh, 36px)', opacity: 0.9,
+              color: 'var(--cel-blue)', letterSpacing: '8px',
+              marginBottom: 'clamp(20px, 3vh, 36px)', opacity: 0.85,
+              textShadow: '0 0 20px rgba(99,197,218,0.4)',
               flexShrink: 0,
-            }}>// SELECT DESTINATION</p>
+            }}>SELECT DESTINATION</p>
 
             <div style={{
               display: 'flex', flexDirection: 'column',
@@ -517,17 +616,12 @@ export default function HomePage() {
             }}>
 
               {/* ── PROFILE ── */}
-              <button className="hub-btn" onClick={() => setView('profile')}
-                style={{
-                  borderColor: '#ff3860',
-                  boxShadow: '6px 6px 0px #ff3860',
-                  background: 'rgba(255,56,96,0.08)',
-                  marginBottom: 'clamp(4px, 1vh, 8px)',
-                }}>
-                <span style={{ color: '#ff3860' }}>◈</span>
+              <button className="hub-btn hub-btn-accent" onClick={() => setView('profile')}
+                style={{ marginBottom: 'clamp(4px, 1vh, 8px)' }}>
+                <span style={{ color: 'var(--cel-red)', fontSize: '0.62em' }}>◆</span>
                 <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   <span>PROFILE</span>
-                  <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.5, letterSpacing: '2px', fontWeight: 500 }}>DEVELOPER STATS</span>
+                  <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.5, letterSpacing: '2px', fontWeight: 500 }}>SMART FACTORY ENGINEER</span>
                 </span>
                 <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
               </button>
@@ -536,14 +630,13 @@ export default function HomePage() {
               <div style={{
                 fontFamily: F_UI, fontWeight: 700, letterSpacing: '4px',
                 fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)',
-                color: '#d6517d', opacity: 0.7,
-                paddingLeft: '4px', marginBottom: '2px',
+                color: 'var(--cel-blue)', opacity: 0.65,
+                paddingLeft: '6px', marginBottom: '2px',
               }}>SERVICE</div>
 
               {NAV_LINKS.filter(l => l.type === 'service').map(({ label, href, desc }, i) => (
-                <a key={`svc-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
-                  style={{ borderColor: '#d6517d', boxShadow: '6px 6px 0px #d6517d' }}>
-                  <span style={{ color: '#d6517d' }}>&gt;</span>
+                <a key={`svc-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer">
+                  <span style={{ color: 'var(--cel-blue)', fontSize: '0.62em' }}>◆</span>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <span>{label}</span>
                     {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
@@ -556,8 +649,8 @@ export default function HomePage() {
               <div style={{
                 fontFamily: F_UI, fontWeight: 700, letterSpacing: '4px',
                 fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)',
-                color: '#888', opacity: 0.7,
-                paddingLeft: '4px', marginTop: 'clamp(6px, 1vh, 12px)', marginBottom: '2px',
+                color: 'rgba(240,242,245,0.45)', opacity: 0.8,
+                paddingLeft: '6px', marginTop: 'clamp(6px, 1vh, 12px)', marginBottom: '2px',
               }}>LOG</div>
 
               {LOG_GROUPS.map((group) => {
@@ -584,9 +677,8 @@ export default function HomePage() {
                       <div className="sub-list">
                         {items.map(({ label, href, desc }, i) => (
                           label === 'BLOG' ? (
-                            <button key={`log-${group.id}-${i}`} className="hub-btn" onClick={() => setView('blog')}
-                              style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                              <span style={{ color: '#888' }}>&gt;</span>
+                            <button key={`log-${group.id}-${i}`} className="hub-btn hub-btn-dim" onClick={() => setView('blog')}>
+                              <span style={{ color: 'rgba(99,197,218,0.55)', fontSize: '0.62em' }}>◆</span>
                               <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                 <span>{label}</span>
                                 {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
@@ -594,9 +686,8 @@ export default function HomePage() {
                               <span style={{ fontSize: 'clamp(0.4rem, 0.8vw, 0.55rem)', opacity: 0.5, marginLeft: 'auto', flexShrink: 0 }}>›</span>
                             </button>
                           ) : (
-                            <a key={`log-${group.id}-${i}`} className="hub-btn" href={href} target="_blank" rel="noreferrer"
-                              style={{ borderColor: '#555', boxShadow: '6px 6px 0px #333' }}>
-                              <span style={{ color: '#888' }}>&gt;</span>
+                            <a key={`log-${group.id}-${i}`} className="hub-btn hub-btn-dim" href={href} target="_blank" rel="noreferrer">
+                              <span style={{ color: 'rgba(99,197,218,0.55)', fontSize: '0.62em' }}>◆</span>
                               <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                                 <span>{label}</span>
                                 {desc && <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', opacity: 0.45, letterSpacing: '2px', fontWeight: 500 }}>{desc}</span>}
@@ -613,7 +704,7 @@ export default function HomePage() {
 
               {/* ── COMING SOON ── */}
               <div className="hub-btn-muted" style={{ marginTop: 'clamp(4px, 0.8vh, 8px)' }}>
-                <span>&gt;</span>
+                <span style={{ fontSize: '0.62em' }}>◆</span>
                 <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   <span>TEAM</span>
                   <span style={{ fontSize: 'clamp(0.55rem, 0.9vw, 0.7rem)', letterSpacing: '2px', fontWeight: 500 }}>COMING SOON</span>
@@ -655,8 +746,8 @@ export default function HomePage() {
               <span style={{
                 fontFamily: F_UI, fontWeight: 600, letterSpacing: '3px',
                 fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
-                color: '#fff', opacity: 0.5,
-              }}>PROFILE / DEVELOPER STATS</span>
+                color: 'var(--cel-snow)', opacity: 0.45,
+              }}>PROFILE / CLIMBER RECORD</span>
             </div>
 
             <ProfileCard />
@@ -685,7 +776,7 @@ export default function HomePage() {
               <span style={{
                 fontFamily: F_UI, fontWeight: 600, letterSpacing: '3px',
                 fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
-                color: '#fff', opacity: 0.5,
+                color: 'var(--cel-snow)', opacity: 0.45,
               }}>BLOG / ARCHIVE</span>
             </div>
 
@@ -696,30 +787,32 @@ export default function HomePage() {
             }}>
               {categories.map((cat) => (
                 <section key={cat.id} style={{
-                  background: 'rgba(0,0,0,0.95)',
-                  border: '4px solid #000',
-                  boxShadow: '10px 10px 0px #d6517d',
+                  background: 'var(--cel-panel)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(240,242,245,0.12)',
+                  borderRadius: '14px',
+                  boxShadow: '0 12px 34px rgba(10,5,20,0.5), inset 0 1px 0 rgba(255,255,255,0.06)',
                   padding: 'clamp(16px, 3vw, 30px)',
                 }}>
                   <span style={{
-                    fontFamily: F_TITLE, fontWeight: 700,
-                    fontSize: 'clamp(1rem, 2vw, 1.4rem)',
-                    color: '#d6517d', marginBottom: '16px', display: 'block',
-                    borderBottom: '2px solid #fff', paddingBottom: '10px',
-                    letterSpacing: '0.1em',
+                    fontFamily: F_TITLE, fontWeight: 600,
+                    fontSize: 'clamp(0.95rem, 1.9vw, 1.3rem)',
+                    color: 'var(--cel-blue)', marginBottom: '16px', display: 'block',
+                    borderBottom: '1px solid rgba(99,197,218,0.25)', paddingBottom: '10px',
+                    letterSpacing: '0.12em',
                   }}>{cat.label}</span>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {cat.comingSoon || cat.posts.length === 0 ? (
                       <li>
-                        <span style={{ color: '#fff', fontSize: 'clamp(1rem, 2vw, 1.8rem)', display: 'flex', alignItems: 'center', opacity: 0.4 }}>
-                          <span style={{ marginRight: '10px', color: '#d6517d' }}>&gt;</span>DECODING...
+                        <span style={{ fontFamily: F_MONO, color: 'var(--cel-snow)', fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', display: 'flex', alignItems: 'center', opacity: 0.35 }}>
+                          <span style={{ marginRight: '10px', color: 'var(--cel-blue)' }}>◆</span>DECODING...
                         </span>
                       </li>
                     ) : (
                       cat.posts.map((post) => (
                         <li key={post.slug} style={{ marginBottom: '10px' }}>
-                          <Link href={`/posts/${post.slug}`} className="post-link" target="_blank" rel="noreferrer">
-                            <span style={{ marginRight: '10px', color: '#d6517d' }}>&gt;</span>
+                          <Link href={post.href ?? `/posts/${post.slug}`} className="post-link" target="_blank" rel="noreferrer">
+                            <span style={{ marginRight: '10px', color: 'var(--cel-blue)', fontSize: '0.7em' }}>◆</span>
                             {post.title}
                           </Link>
                         </li>
