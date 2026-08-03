@@ -13,9 +13,10 @@ type View = 'hero' | 'hub' | 'blog' | 'profile';
 // group: LOG 하위 메뉴 구분자 (LOG_GROUPS 참조)
 const NAV_LINKS = [
   // SERVICE
-  { label: 'VOYAGE',    href: 'https://streaming-production-40fd.up.railway.app/',  type: 'service', desc: 'CONVERSATION'      },
-  { label: 'VOYAGE',    href: 'https://voyage-student.vercel.app/',                 type: 'service', desc: 'GRAMMAR & READING' },
-  { label: 'BOOKS',     href: 'https://butter-black.vercel.app/',                   type: 'service', desc: 'READING LOG'       },
+  { label: 'VOYAGE',    href: 'https://voyageapp.org/',                             type: 'service', desc: 'CONVERSATION'      },
+  { label: 'VOYAGE',    href: 'https://voyage.jungbase.com/',                       type: 'service', desc: 'GRAMMAR & READING' },
+  { label: 'BOOKS',     href: 'https://butter.jungbase.com/',                       type: 'service', desc: 'READING LOG'       },
+  { label: 'ARCADE',    href: 'https://arcade.jungbase.com/',                       type: 'service', desc: 'WEB GAMES'         },
   { label: 'SOVEREIGN', href: 'https://sovereign-production-eca9.up.railway.app/',  type: 'service', desc: 'SIDE PROJECT'      },
   // LOG / ENGINEERING
   { label: 'AGENTIC',   href: 'https://jungyh870918.github.io/agentic-code/',        type: 'log', group: 'eng',    desc: 'ORCH SPEC'      },
