@@ -16,6 +16,18 @@ export type Category = {
 
 export const categories: Category[] = [
   {
+    id: 'agentic',
+    label: 'AGENTIC',
+    posts: [
+      {
+        slug: 'agentic-coding-practice',
+        title: 'PRACTICE GUIDE',
+        // 단독 실행형 HTML 문서 (public/docs)
+        href: '/docs/agentic-coding.html',
+      },
+    ],
+  },
+  {
     id: 'os',
     label: 'OS',
     posts: [
